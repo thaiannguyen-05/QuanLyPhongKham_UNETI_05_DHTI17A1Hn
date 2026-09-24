@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<AccountStatusFilter>();
+});
 
 // Cau hinh DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -14,12 +18,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Cau hinh Session
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<AccountStatusFilter>();
 
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.Name = ".QuanLyPhongKham.Session";
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
 var app = builder.Build();

@@ -24,7 +24,18 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            @if (Context.Session.GetInt32(SessionKeys.AccountId).HasValue)
+                            {
+                                <span class="navbar-text me-2">@Context.Session.GetString(SessionKeys.FullName)</span>
+                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link">Đăng xuất</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+                            }
                         </li>
                     </ul>
                 </div>
