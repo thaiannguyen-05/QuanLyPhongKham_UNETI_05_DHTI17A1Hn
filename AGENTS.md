@@ -45,3 +45,12 @@ Format:
 - `CONTEXT.md` chỉ là glossary, không ghi chi tiết implementation.
 - Chi tiết còn treo (sẽ grill tiếp): phân biệt Lịch khám vs Phiếu đăng ký khám (Q6), Auth Identity vs custom (Q7). Không tự chốt khi chưa xác nhận với chủ repo.
 - Giữ `AGENTS.md` và `CLAUDE.md` đồng bộ khi sửa đổi.
+
+## 6. Kiến trúc Controller – Service — BẮT BUỘC
+
+- Controller mỏng: chỉ nhận request, check `ModelState`, gọi `Services/*/*Service`, trả View/Redirect, gắn `[Authorize]/[ValidateAntiForgeryToken]`, `try-catch` exception có sẵn của .NET rồi trả View lỗi.
+- Cấm trong Controller: `DbContext`, LINQ (`Where/ToList/...`), SQL/`SaveChanges`, validation nghiệp vụ, `new Service()` thủ công.
+- Service dày: chứa LINQ + EF Core + validation nghiệp vụ. Mỗi nghiệp vụ 1 subfolder `Services/<Tên>/` gồm `I<Tên>Service.cs + <Tên>Service.cs`, method English (`GetAllAsync/SearchAsync/CreateAsync...`). Được inject Service khác qua DI. Lỗi nghiệp vụ `throw` exception có sẵn của .NET (`InvalidOperationException/ArgumentException/KeyNotFoundException...`) với message Tiếng Việt.
+- DI: đăng ký `Interface + AddScoped` trong `Program.cs`.
+- Ví dụ đúng (tìm kiếm Bác sĩ theo tên + Chuyên khoa): Controller gọi `await _doctorService.SearchAsync(name, specialtyId)`; LINQ `Where` nằm trong `DoctorService.SearchAsync`, không nằm ở Controller.
+- Phạm vi: áp cho code mới từ nay về sau. Chi tiết cây thư mục xem `STRUCTURE.md`. Không ghi rule này vào `CONTEXT.md` (file đó chỉ là glossary).
