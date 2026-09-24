@@ -23,6 +23,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (Context.Session.GetString(SessionKeys.Role) == nameof(VaiTro.Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="TaiKhoan" asp-action="Index">Quản lý tài khoản</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             @if (Context.Session.GetInt32(SessionKeys.AccountId).HasValue)
                             {
