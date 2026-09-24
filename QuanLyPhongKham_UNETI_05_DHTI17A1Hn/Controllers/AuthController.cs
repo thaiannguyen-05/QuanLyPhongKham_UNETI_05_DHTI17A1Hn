@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
@@ -14,14 +17,17 @@ public sealed class AuthController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login(string? returnUrl = null)
+    public IActionResult Login()
     {
-        if (HttpContext.Session.GetInt32(SessionKeys.AccountId).HasValue)
+        var currentAccount = HttpContext.Items[RequireVaiTroAttribute.CurrentAccountItemKey]
+            as TaiKhoan;
+
+        if (currentAccount is not null)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectForRole(currentAccount.VaiTro);
         }
 
-        return View(new LoginViewModel { ReturnUrl = returnUrl });
+        return View(new LoginViewModel());
     }
 
     [HttpPost]
@@ -30,27 +36,26 @@ public sealed class AuthController : Controller
     {
         if (!ModelState.IsValid)
         {
+            model.MatKhau = string.Empty;
             return View(model);
         }
 
         var result = await _authService.LoginAsync(model);
         if (!result.Succeeded || result.Account is null)
         {
-            ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Đăng nhập không thành công.");
+            ModelState.AddModelError(
+                string.Empty,
+                result.ErrorMessage ?? "Tên đăng nhập hoặc mật khẩu không đúng.");
+            model.MatKhau = string.Empty;
             return View(model);
         }
 
-        HttpContext.Session.SetInt32(SessionKeys.AccountId, result.Account.MaTaiKhoan);
-        HttpContext.Session.SetString(SessionKeys.Username, result.Account.TenDangNhap);
-        HttpContext.Session.SetString(SessionKeys.FullName, result.Account.HoTen);
-        HttpContext.Session.SetString(SessionKeys.Role, result.Account.VaiTro.ToString());
+        HttpContext.Session.Clear();
+        HttpContext.Session.SetInt32(
+            SessionKeys.MaTaiKhoan,
+            result.Account.MaTaiKhoan);
 
-        if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-        {
-            return LocalRedirect(model.ReturnUrl);
-        }
-
-        return RedirectToAction("Index", "Home");
+        return RedirectForRole(result.Account.VaiTro);
     }
 
     [HttpPost]
@@ -58,6 +63,13 @@ public sealed class AuthController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
-        return RedirectToAction(nameof(Login));
+        return RedirectToAction("Index", "Home");
+    }
+
+    private IActionResult RedirectForRole(VaiTro role)
+    {
+        return role == VaiTro.Admin
+            ? RedirectToAction("Index", "Specialty")
+            : RedirectToAction("Index", "Home");
     }
 }

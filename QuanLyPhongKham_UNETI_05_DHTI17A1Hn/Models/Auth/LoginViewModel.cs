@@ -13,6 +13,4 @@ public class LoginViewModel
     [DataType(DataType.Password)]
     [Display(Name = "Mật khẩu")]
     public string MatKhau { get; set; } = string.Empty;
-
-    public string? ReturnUrl { get; set; }
 }

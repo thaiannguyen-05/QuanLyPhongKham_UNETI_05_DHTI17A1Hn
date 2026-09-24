@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
-    options.Filters.AddService<AccountStatusFilter>();
+    options.Filters.Add<AccountRevalidationFilter>();
 });
 
 // Cau hinh DbContext
@@ -20,7 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
-builder.Services.AddScoped<AccountStatusFilter>();
+builder.Services.AddScoped<AccountRevalidationFilter>();
 
 builder.Services.AddSession(options =>
 {

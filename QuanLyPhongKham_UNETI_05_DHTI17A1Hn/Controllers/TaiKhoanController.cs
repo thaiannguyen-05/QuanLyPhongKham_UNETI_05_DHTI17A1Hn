@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
-[RequireAdmin]
+[RequireVaiTro(VaiTro.Admin)]
 public sealed class TaiKhoanController : Controller
 {
     private readonly ITaiKhoanService _taiKhoanService;
@@ -101,7 +102,7 @@ public sealed class TaiKhoanController : Controller
         bool isLocked,
         CancellationToken cancellationToken)
     {
-        var currentAccountId = HttpContext.Session.GetInt32(SessionKeys.AccountId);
+        var currentAccountId = HttpContext.Session.GetInt32(SessionKeys.MaTaiKhoan);
         if (currentAccountId == id)
         {
             TempData["Error"] = "Không thể khóa tài khoản đang đăng nhập.";

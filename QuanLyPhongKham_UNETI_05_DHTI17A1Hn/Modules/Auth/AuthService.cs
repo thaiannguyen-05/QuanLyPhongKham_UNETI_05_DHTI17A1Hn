@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
@@ -31,7 +32,9 @@ public sealed class AuthService : IAuthService
 
         if (AuthHelper.IsLocked(account))
         {
-            return AuthResult.Failure("Tài khoản đã bị khóa.", isLocked: true);
+            return AuthResult.Failure(
+                "Tài khoản đã bị khóa, không được phép đăng nhập.",
+                isLocked: true);
         }
 
         if (!PasswordHasher.Verify(model.MatKhau, account.MatKhau))

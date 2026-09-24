@@ -12,8 +12,6 @@
             <div class="card-body">
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
-                    <input asp-for="ReturnUrl" type="hidden" />
-
                     <div class="mb-3">
                         <label asp-for="TenDangNhap" class="form-label"></label>
                         <input asp-for="TenDangNhap" class="form-control" autocomplete="username" />
@@ -22,7 +20,7 @@
 
                     <div class="mb-3">
                         <label asp-for="MatKhau" class="form-label"></label>
-                        <input asp-for="MatKhau" class="form-control" autocomplete="current-password" />
+                        <input name="MatKhau" id="MatKhau" type="password" class="form-control" autocomplete="current-password" />
                         <span asp-validation-for="MatKhau" class="text-danger"></span>
                     </div>
 
