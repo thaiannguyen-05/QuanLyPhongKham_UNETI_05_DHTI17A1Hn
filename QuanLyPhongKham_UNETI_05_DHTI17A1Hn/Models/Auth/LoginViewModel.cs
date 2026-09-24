@@ -7,10 +7,10 @@ public class LoginViewModel
     [Required(ErrorMessage = "Tên đăng nhập là bắt buộc.")]
     [StringLength(50, ErrorMessage = "Tên đăng nhập không được vượt quá 50 ký tự.")]
     [Display(Name = "Tên đăng nhập")]
-    public string TenDangNhap { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
     [DataType(DataType.Password)]
     [Display(Name = "Mật khẩu")]
-    public string MatKhau { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

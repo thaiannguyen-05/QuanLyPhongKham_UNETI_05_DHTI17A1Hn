@@ -5,7 +5,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
-[RequireVaiTro]
+[RequireRole]
 public class HomeController : Controller
 {
     public IActionResult Index()

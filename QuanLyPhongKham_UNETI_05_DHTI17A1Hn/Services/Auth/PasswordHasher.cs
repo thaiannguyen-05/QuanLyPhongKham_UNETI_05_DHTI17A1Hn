@@ -1,4 +1,4 @@
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 public static class PasswordHasher
 {

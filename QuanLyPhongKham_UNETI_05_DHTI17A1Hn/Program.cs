@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Cau hinh Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddSession(options =>
 {

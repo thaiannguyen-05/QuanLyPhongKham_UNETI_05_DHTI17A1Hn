@@ -1,69 +1,67 @@
-// Shared foundation - ca nhom.
-// Enums cho VaiTro + TrangThai (thay string de type-safe, hien thi tieng Viet qua Display).
 using System.ComponentModel.DataAnnotations;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 
-public enum VaiTro
+public enum Role
 {
     [Display(Name = "Quản trị viên")]
     Admin = 0,
     [Display(Name = "Bệnh nhân")]
-    BenhNhan = 1
+    Patient = 1
 }
 
-public enum TrangThaiTaiKhoan
+public enum AccountStatus
 {
     [Display(Name = "Hoạt động")]
-    HoatDong = 0,
+    Active = 0,
     [Display(Name = "Khóa")]
-    Khoa = 1
+    Locked = 1
 }
 
-public enum TrangThaiChuyenKhoa
+public enum SpecialtyStatus
 {
     [Display(Name = "Hoạt động")]
-    HoatDong = 0,
+    Active = 0,
     [Display(Name = "Tạm ngừng")]
-    TamNgung = 1
+    Inactive = 1
 }
 
-public enum TrangThaiBacSi
+public enum DoctorStatus
 {
     [Display(Name = "Đang làm việc")]
-    DangLamViec = 0,
+    Working = 0,
     [Display(Name = "Tạm nghỉ")]
-    TamNghi = 1,
+    OnLeave = 1,
     [Display(Name = "Ngừng làm việc")]
-    NgungLamViec = 2
+    Inactive = 2
 }
 
-public enum TrangThaiBenhNhan
+public enum PatientStatus
 {
     [Display(Name = "Hoạt động")]
-    HoatDong = 0,
+    Active = 0,
     [Display(Name = "Tạm ngừng")]
-    TamNgung = 1
+    Inactive = 1
 }
 
-public enum TrangThaiLichKham
+public enum ScheduleStatus
 {
     [Display(Name = "Còn nhận đăng ký")]
-    ConNhanDangKy = 0,
+    Open = 0,
     [Display(Name = "Đã đủ")]
-    DaDu = 1,
+    Full = 1,
     [Display(Name = "Tạm ngừng")]
-    TamNgung = 2
+    Closed = 2
 }
 
-public enum TrangThaiPhieu
+public enum BookingStatus
 {
     [Display(Name = "Chờ xác nhận")]
-    ChoXacNhan = 0,
+    Pending = 0,
     [Display(Name = "Đã xác nhận")]
-    DaXacNhan = 1,
+    Confirmed = 1,
     [Display(Name = "Đã khám")]
-    DaKham = 2,
+    Completed = 2,
     [Display(Name = "Đã hủy")]
-    DaHuy = 3
+    Cancelled = 3
 }

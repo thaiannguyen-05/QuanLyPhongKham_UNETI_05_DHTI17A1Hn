@@ -4,7 +4,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
-[RequireVaiTro(VaiTro.Admin)]
+[RequireRole(Role.Admin)]
 public sealed class SpecialtyController : Controller
 {
     public IActionResult Index()

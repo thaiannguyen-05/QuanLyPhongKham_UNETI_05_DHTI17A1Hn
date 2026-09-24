@@ -1,4 +1,4 @@
-@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth.TaiKhoanIndexViewModel
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts.AccountIndexViewModel
 @{
     ViewData["Title"] = "Quản lý tài khoản";
 }
@@ -35,19 +35,19 @@
             @foreach (var account in Model.Accounts)
             {
                 <tr>
-                    <td>@account.MaTaiKhoan</td>
-                    <td>@account.TenDangNhap</td>
-                    <td>@account.HoTen</td>
+                    <td>@account.Id</td>
+                    <td>@account.Username</td>
+                    <td>@account.FullName</td>
                     <td>@(account.Email ?? "-")</td>
-                    <td>@account.VaiTro</td>
-                    <td>@account.TrangThai</td>
+                    <td>@account.Role</td>
+                    <td>@account.Status</td>
                     <td>
-                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@account.MaTaiKhoan">Sửa</a>
-                        <form class="d-inline" asp-action="SetLock" asp-route-id="@account.MaTaiKhoan" method="post">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@account.Id">Sửa</a>
+                        <form class="d-inline" asp-action="SetLock" asp-route-id="@account.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="isLocked" value="@(account.TrangThai != TrangThaiTaiKhoan.Khoa)" />
+                            <input type="hidden" name="isLocked" value="@(account.Status != AccountStatus.Locked)" />
                             <button class="btn btn-sm btn-outline-secondary" type="submit">
-                                @(account.TrangThai == TrangThaiTaiKhoan.Khoa ? "Mở khóa" : "Khóa")
+                                @(account.Status == AccountStatus.Locked ? "Mở khóa" : "Khóa")
                             </button>
                         </form>
                     </td>

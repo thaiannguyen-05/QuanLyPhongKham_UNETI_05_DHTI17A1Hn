@@ -1,39 +1,37 @@
-// Shared foundation - ca nhom. SV nhan Module dien Ho ten/MSSV khi sua file nay.
-// Noi dung: Entity BenhNhan theo muc 7.1 de tai 04.
 using System.ComponentModel.DataAnnotations;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 
-public class BenhNhan
+public class Patient
 {
     [Key]
     [Display(Name = "Mã bệnh nhân")]
-    public int MaBenhNhan { get; set; }
+    public int Id { get; set; }
 
     [Display(Name = "Mã tài khoản")]
-    public int? MaTaiKhoan { get; set; }
+    public int? AccountId { get; set; }
 
-    [ForeignKey(nameof(MaTaiKhoan))]
-    public TaiKhoan? TaiKhoan { get; set; }
+    [ForeignKey(nameof(AccountId))]
+    public Account? Account { get; set; }
 
     [Required(ErrorMessage = "Họ tên bắt buộc nhập.")]
     [StringLength(100)]
     [Display(Name = "Họ tên")]
-    public string HoTen { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
 
     [DataType(DataType.Date)]
     [Display(Name = "Ngày sinh")]
-    public DateTime? NgaySinh { get; set; }
+    public DateTime? DateOfBirth { get; set; }
 
     [Display(Name = "Giới tính")]
-    public string? GioiTinh { get; set; }
+    public string? Gender { get; set; }
 
     [Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
     [StringLength(15)]
     [Display(Name = "Số điện thoại")]
-    public string? SoDienThoai { get; set; }
+    public string? Phone { get; set; }
 
     [EmailAddress(ErrorMessage = "Email không đúng định dạng.")]
     [StringLength(100)]
@@ -41,14 +39,14 @@ public class BenhNhan
 
     [StringLength(200)]
     [Display(Name = "Địa chỉ")]
-    public string? DiaChi { get; set; }
+    public string? Address { get; set; }
 
     [DataType(DataType.Date)]
     [Display(Name = "Ngày đăng ký")]
-    public DateTime NgayDangKy { get; set; } = DateTime.Today;
+    public DateTime RegisteredAt { get; set; } = DateTime.Today;
 
     [Display(Name = "Trạng thái")]
-    public TrangThaiBenhNhan TrangThai { get; set; } = TrangThaiBenhNhan.HoatDong;
+    public PatientStatus Status { get; set; } = PatientStatus.Active;
 
-    public ICollection<PhieuDangKyKham> PhieuDangKyKhams { get; set; } = new List<PhieuDangKyKham>();
+    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

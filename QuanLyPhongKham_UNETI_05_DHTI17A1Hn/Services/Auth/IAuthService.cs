@@ -1,7 +1,7 @@
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 public interface IAuthService
 {
@@ -9,10 +9,10 @@ public interface IAuthService
 }
 
 public sealed record AuthenticatedAccount(
-    int MaTaiKhoan,
-    string TenDangNhap,
-    string HoTen,
-    VaiTro VaiTro);
+    int Id,
+    string Username,
+    string FullName,
+    Role Role);
 
 public sealed record AuthResult(
     bool Succeeded,

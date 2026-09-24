@@ -1,34 +1,35 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public sealed class RequireVaiTroAttribute : TypeFilterAttribute
+public sealed class RequireRoleAttribute : TypeFilterAttribute
 {
-    public RequireVaiTroAttribute()
-        : base(typeof(RequireVaiTroFilter))
+    public RequireRoleAttribute()
+        : base(typeof(RequireRoleFilter))
     {
     }
 
-    public RequireVaiTroAttribute(VaiTro requiredRole)
-        : base(typeof(RequireVaiTroFilter))
+    public RequireRoleAttribute(Role requiredRole)
+        : base(typeof(RequireRoleFilter))
     {
         RequiredRole = requiredRole;
     }
 
-    public VaiTro? RequiredRole { get; }
+    public Role? RequiredRole { get; }
 }
 
-public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
+public sealed class RequireRoleFilter : IAsyncAuthorizationFilter
 {
     private readonly AppDbContext _dbContext;
 
-    public RequireVaiTroFilter(AppDbContext dbContext)
+    public RequireRoleFilter(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -36,7 +37,7 @@ public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var metadata = context.ActionDescriptor.EndpointMetadata
-            .OfType<RequireVaiTroAttribute>()
+            .OfType<RequireRoleAttribute>()
             .FirstOrDefault();
 
         if (metadata is null)
@@ -44,7 +45,7 @@ public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
             return;
         }
 
-        var accountId = context.HttpContext.Session.GetInt32(SessionKeys.MaTaiKhoan);
+        var accountId = context.HttpContext.Session.GetInt32(SessionKeys.AccountId);
         if (!accountId.HasValue)
         {
             if (metadata.RequiredRole is null)
@@ -56,8 +57,8 @@ public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
             return;
         }
 
-        var account = await _dbContext.TaiKhoans.FindAsync(accountId.Value);
-        if (account is null || AuthHelper.IsLocked(account))
+        var account = await _dbContext.Accounts.FindAsync(accountId.Value);
+        if (account is null || account.Status == AccountStatus.Locked)
         {
             context.HttpContext.Session.Clear();
             RedirectToLogin(context);
@@ -65,22 +66,22 @@ public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
         }
 
         if (metadata.RequiredRole.HasValue
-            && account.VaiTro != metadata.RequiredRole.Value)
+            && account.Role != metadata.RequiredRole.Value)
         {
             context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
             return;
         }
 
         var httpContext = context.HttpContext;
-        httpContext.Items[AuthItems.MaTaiKhoan] = account.MaTaiKhoan;
-        httpContext.Items[AuthItems.VaiTro] = account.VaiTro;
-        httpContext.Items[AuthItems.HoTen] = account.HoTen;
+        httpContext.Items[AuthItems.AccountId] = account.Id;
+        httpContext.Items[AuthItems.Role] = account.Role;
+        httpContext.Items[AuthItems.FullName] = account.FullName;
 
-        if (account.VaiTro == VaiTro.BenhNhan)
+        if (account.Role == Role.Patient)
         {
-            httpContext.Items[AuthItems.MaBenhNhan] = await _dbContext.BenhNhans
-                .Where(patient => patient.MaTaiKhoan == account.MaTaiKhoan)
-                .Select(patient => (int?)patient.MaBenhNhan)
+            httpContext.Items[AuthItems.PatientId] = await _dbContext.Patients
+                .Where(patient => patient.AccountId == account.Id)
+                .Select(patient => (int?)patient.Id)
                 .SingleOrDefaultAsync();
         }
     }
@@ -93,8 +94,8 @@ public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
 
 public static class AuthItems
 {
-    public const string MaTaiKhoan = "MaTaiKhoan";
-    public const string VaiTro = "VaiTro";
-    public const string HoTen = "HoTen";
-    public const string MaBenhNhan = "MaBenhNhan";
+    public const string AccountId = "AccountId";
+    public const string Role = "Role";
+    public const string FullName = "FullName";
+    public const string PatientId = "PatientId";
 }

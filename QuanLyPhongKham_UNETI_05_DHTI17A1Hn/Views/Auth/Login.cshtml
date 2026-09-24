@@ -13,15 +13,15 @@
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="mb-3">
-                        <label asp-for="TenDangNhap" class="form-label"></label>
-                        <input asp-for="TenDangNhap" class="form-control" autocomplete="username" />
-                        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+                        <label asp-for="Username" class="form-label"></label>
+                        <input asp-for="Username" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="MatKhau" class="form-label"></label>
-                        <input name="MatKhau" id="MatKhau" type="password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="MatKhau" class="text-danger"></span>
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>

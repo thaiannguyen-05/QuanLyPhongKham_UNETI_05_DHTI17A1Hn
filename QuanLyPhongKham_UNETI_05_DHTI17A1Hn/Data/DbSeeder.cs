@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 
@@ -11,24 +11,24 @@ public static class DbSeeder
 
     public static async Task SeedAdminAsync(AppDbContext context)
     {
-        var adminExists = await context.TaiKhoans
-            .AnyAsync(account => account.TenDangNhap == AdminUsername);
+        var adminExists = await context.Accounts
+            .AnyAsync(account => account.Username == AdminUsername);
 
         if (adminExists)
         {
             return;
         }
 
-        var admin = new TaiKhoan
+        var admin = new Account
         {
-            TenDangNhap = AdminUsername,
-            MatKhau = PasswordHasher.Hash("Admin@123"),
-            HoTen = "Quản trị viên",
-            VaiTro = VaiTro.Admin,
-            TrangThai = TrangThaiTaiKhoan.HoatDong
+            Username = AdminUsername,
+            PasswordHash = PasswordHasher.Hash("Admin@123"),
+            FullName = "Quản trị viên",
+            Role = Role.Admin,
+            Status = AccountStatus.Active
         };
 
-        context.TaiKhoans.Add(admin);
+        context.Accounts.Add(admin);
         await context.SaveChangesAsync();
     }
 }

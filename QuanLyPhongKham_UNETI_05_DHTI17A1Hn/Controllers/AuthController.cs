@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
-[RequireVaiTro]
+[RequireRole]
 public sealed class AuthController : Controller
 {
     private readonly IAuthService _authService;
@@ -19,7 +19,7 @@ public sealed class AuthController : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        if (HttpContext.Items[AuthItems.VaiTro] is VaiTro currentRole)
+        if (HttpContext.Items[AuthItems.Role] is Role currentRole)
         {
             return RedirectForRole(currentRole);
         }
@@ -33,7 +33,7 @@ public sealed class AuthController : Controller
     {
         if (!ModelState.IsValid)
         {
-            model.MatKhau = string.Empty;
+            model.Password = string.Empty;
             return View(model);
         }
 
@@ -43,16 +43,16 @@ public sealed class AuthController : Controller
             ModelState.AddModelError(
                 string.Empty,
                 result.ErrorMessage ?? "Tên đăng nhập hoặc mật khẩu không đúng.");
-            model.MatKhau = string.Empty;
+            model.Password = string.Empty;
             return View(model);
         }
 
         HttpContext.Session.Clear();
         HttpContext.Session.SetInt32(
-            SessionKeys.MaTaiKhoan,
-            result.Account.MaTaiKhoan);
+            SessionKeys.AccountId,
+            result.Account.Id);
 
-        return RedirectForRole(result.Account.VaiTro);
+        return RedirectForRole(result.Account.Role);
     }
 
     [HttpPost]
@@ -63,9 +63,9 @@ public sealed class AuthController : Controller
         return RedirectToAction("Index", "Home");
     }
 
-    private IActionResult RedirectForRole(VaiTro role)
+    private IActionResult RedirectForRole(Role role)
     {
-        return role == VaiTro.Admin
+        return role == Role.Admin
             ? RedirectToAction("Index", "Specialty")
             : RedirectToAction("Index", "Home");
     }
