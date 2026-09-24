@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 
 public static class DbSeeder
 {
     private const string AdminUsername = "admin";
-
-    // Hash của mật khẩu ban đầu do nhóm thống nhất; không lưu mật khẩu thường.
-    private const string AdminPasswordHash = "AQAAAAIAAYagAAAAENXDDa1DA716k6kh9dSK/72ksrOxBvDVRPFM+a/aZj6iwWPUrhzPDRpSVCAR7/LeGQ==";
+    private const string AdminInitialPassword = "Admin@123";
 
     public static async Task SeedAdminAsync(AppDbContext context)
     {
@@ -24,7 +23,7 @@ public static class DbSeeder
         var admin = new TaiKhoan
         {
             TenDangNhap = AdminUsername,
-            MatKhau = AdminPasswordHash,
+            MatKhau = PasswordHasher.Hash(AdminInitialPassword),
             HoTen = "Quản trị viên",
             VaiTro = VaiTro.Admin,
             TrangThai = TrangThaiTaiKhoan.HoatDong
