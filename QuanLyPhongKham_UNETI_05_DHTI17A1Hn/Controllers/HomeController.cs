@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using clinic_management.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 
-namespace clinic_management.Controllers;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
 public class HomeController : Controller
 {

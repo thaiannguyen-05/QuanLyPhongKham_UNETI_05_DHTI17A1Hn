@@ -1,4 +1,4 @@
-namespace clinic_management.Models;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 
 public class ErrorViewModel
 {
