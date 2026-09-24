@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using QuanLyPhongKham_UNETI05_TI17A1Hn.Data;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

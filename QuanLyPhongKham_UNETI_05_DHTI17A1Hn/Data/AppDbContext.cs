@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
-namespace QuanLyPhongKham_UNETI05_TI17A1Hn.Data
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data
 {
     
     public class AppDbContext : DbContext
@@ -34,6 +34,10 @@ namespace QuanLyPhongKham_UNETI05_TI17A1Hn.Data
             modelBuilder.Entity<ChuyenKhoa>()
                 .HasIndex(c => c.TenChuyenKhoa)
                 .IsUnique();
+
+            modelBuilder.Entity<BacSi>()
+                .Property(b => b.PhiKham)
+                .HasPrecision(18, 2);
         }
     }
 }
