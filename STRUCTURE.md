@@ -20,7 +20,7 @@
 
 ## 3. Cây thư mục mục tiêu (tuân thủ MVC)
 
-Nguyên tắc (đã chốt Q1–Q9): `Controllers/` là nơi duy nhất chứa Controller (đúng ASP.NET Core MVC). `Services/<Tên>/` chỉ chứa Service + Interface, không chứa Controller/View.
+Nguyên tắc (pilot Auth 2026-09-25): backend theo feature `Modules/<Tên>/{Controllers,Services,Models}`, `Views/<Tên>/` tách riêng. `Modules/Auth, Account, Home, Specialty/` đã xong. Shared giữ nguyên: `Models/Schema/`, `Data/`, `Common/`, `Enums/`, `Views/` tách riêng. Module mới (`Doctor, Patient, Schedule, Booking, Statistic`) làm theo cùng mẫu.
 
 ```text
 clinic_management/

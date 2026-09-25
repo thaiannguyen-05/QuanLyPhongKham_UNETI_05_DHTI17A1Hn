@@ -4,7 +4,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
 
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Home.Controllers;
 
 [RequireRole]
 public class HomeController : Controller

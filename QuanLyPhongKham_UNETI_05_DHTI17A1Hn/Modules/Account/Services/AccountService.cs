@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account.Dto;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services.Dto;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
 
 public sealed class AccountService : IAccountService
 {
@@ -77,7 +77,7 @@ public sealed class AccountService : IAccountService
 
         var username = dto.Username;
 
-        var account = new Models.Schema.Account
+        var account = new QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Account
         {
             Username = username,
             PasswordHash = PasswordHasher.Hash(dto.Password),
