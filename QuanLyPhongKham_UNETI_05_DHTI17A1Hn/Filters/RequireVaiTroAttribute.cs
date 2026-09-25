@@ -3,101 +3,98 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public sealed class RequireVaiTroAttribute : Attribute, IAsyncActionFilter
+public sealed class RequireVaiTroAttribute : TypeFilterAttribute
 {
-    public const string CurrentAccountItemKey = "Auth.CurrentAccount";
-
-    private readonly VaiTro _requiredRole;
+    public RequireVaiTroAttribute()
+        : base(typeof(RequireVaiTroFilter))
+    {
+    }
 
     public RequireVaiTroAttribute(VaiTro requiredRole)
+        : base(typeof(RequireVaiTroFilter))
     {
-        _requiredRole = requiredRole;
+        RequiredRole = requiredRole;
     }
 
-    public async Task OnActionExecutionAsync(
-        ActionExecutingContext context,
-        ActionExecutionDelegate next)
-    {
-        var account = await AccountSessionValidator.GetValidAccountAsync(
-            context.HttpContext);
-
-        if (account is null)
-        {
-            context.HttpContext.Session.Clear();
-            context.Result = AccountSessionValidator.RedirectToLogin();
-            return;
-        }
-
-        if (account.VaiTro != _requiredRole)
-        {
-            context.Result = new RedirectToActionResult("Index", "Home", null);
-            return;
-        }
-
-        await next();
-    }
+    public VaiTro? RequiredRole { get; }
 }
 
-public sealed class AccountRevalidationFilter : IAsyncActionFilter
+public sealed class RequireVaiTroFilter : IAsyncAuthorizationFilter
 {
-    public async Task OnActionExecutionAsync(
-        ActionExecutingContext context,
-        ActionExecutionDelegate next)
-    {
-        var account = await AccountSessionValidator.GetValidAccountAsync(
-            context.HttpContext);
+    private readonly AppDbContext _dbContext;
 
-        if (account is null && context.HttpContext.Session.GetInt32(SessionKeys.MaTaiKhoan).HasValue)
+    public RequireVaiTroFilter(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+    {
+        var metadata = context.ActionDescriptor.EndpointMetadata
+            .OfType<RequireVaiTroAttribute>()
+            .FirstOrDefault();
+
+        if (metadata is null)
         {
-            context.HttpContext.Session.Clear();
-            context.Result = AccountSessionValidator.RedirectToLogin();
             return;
         }
 
-        await next();
-    }
-}
-
-internal static class AccountSessionValidator
-{
-    public static async Task<TaiKhoan?> GetValidAccountAsync(HttpContext httpContext)
-    {
-        var accountId = httpContext.Session.GetInt32(SessionKeys.MaTaiKhoan);
+        var accountId = context.HttpContext.Session.GetInt32(SessionKeys.MaTaiKhoan);
         if (!accountId.HasValue)
         {
-            return null;
+            if (metadata.RequiredRole is null)
+            {
+                return;
+            }
+
+            RedirectToLogin(context);
+            return;
         }
 
-        if (httpContext.Items.TryGetValue(
-                RequireVaiTroAttribute.CurrentAccountItemKey,
-                out var cachedAccount)
-            && cachedAccount is TaiKhoan currentAccount)
-        {
-            return currentAccount;
-        }
-
-        var dbContext = httpContext.RequestServices.GetRequiredService<AppDbContext>();
-        var account = await dbContext.TaiKhoans
-            .AsNoTracking()
-            .FirstOrDefaultAsync(item => item.MaTaiKhoan == accountId.Value);
-
+        var account = await _dbContext.TaiKhoans.FindAsync(accountId.Value);
         if (account is null || AuthHelper.IsLocked(account))
         {
-            return null;
+            context.HttpContext.Session.Clear();
+            RedirectToLogin(context);
+            return;
         }
 
-        httpContext.Items[RequireVaiTroAttribute.CurrentAccountItemKey] = account;
-        return account;
+        if (metadata.RequiredRole.HasValue
+            && account.VaiTro != metadata.RequiredRole.Value)
+        {
+            context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
+            return;
+        }
+
+        var httpContext = context.HttpContext;
+        httpContext.Items[AuthItems.MaTaiKhoan] = account.MaTaiKhoan;
+        httpContext.Items[AuthItems.VaiTro] = account.VaiTro;
+        httpContext.Items[AuthItems.HoTen] = account.HoTen;
+
+        if (account.VaiTro == VaiTro.BenhNhan)
+        {
+            httpContext.Items[AuthItems.MaBenhNhan] = await _dbContext.BenhNhans
+                .Where(patient => patient.MaTaiKhoan == account.MaTaiKhoan)
+                .Select(patient => (int?)patient.MaBenhNhan)
+                .SingleOrDefaultAsync();
+        }
     }
 
-    public static RedirectToActionResult RedirectToLogin()
+    private static void RedirectToLogin(AuthorizationFilterContext context)
     {
-        return new RedirectToActionResult("Login", "Auth", null);
+        context.Result = new RedirectToActionResult("Login", "Auth", null);
     }
+}
+
+public static class AuthItems
+{
+    public const string MaTaiKhoan = "MaTaiKhoan";
+    public const string VaiTro = "VaiTro";
+    public const string HoTen = "HoTen";
+    public const string MaBenhNhan = "MaBenhNhan";
 }

@@ -11,7 +11,8 @@
 </head>
 <body>
     @{
-        var currentAccount = Context.Items[RequireVaiTroAttribute.CurrentAccountItemKey] as TaiKhoan;
+        var currentRole = Context.Items[AuthItems.VaiTro] as VaiTro?;
+        var currentName = Context.Items[AuthItems.HoTen] as string;
     }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -26,16 +27,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (currentAccount?.VaiTro == VaiTro.Admin)
+                        @if (currentRole == VaiTro.Admin)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="TaiKhoan" asp-action="Index">Quản lý tài khoản</a>
                             </li>
                         }
                         <li class="nav-item">
-                            @if (currentAccount is not null)
+                            @if (!string.IsNullOrWhiteSpace(currentName))
                             {
-                                <span class="navbar-text me-2">@currentAccount.HoTen</span>
+                                <span class="navbar-text me-2">@currentName</span>
                                 <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-link nav-link">Đăng xuất</button>

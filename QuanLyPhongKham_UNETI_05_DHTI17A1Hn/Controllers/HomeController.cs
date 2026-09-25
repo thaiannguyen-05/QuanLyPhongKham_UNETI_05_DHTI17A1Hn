@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
+[RequireVaiTro]
 public class HomeController : Controller
 {
     public IActionResult Index()

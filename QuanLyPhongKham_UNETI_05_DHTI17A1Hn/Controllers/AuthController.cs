@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
 
+[RequireVaiTro]
 public sealed class AuthController : Controller
 {
     private readonly IAuthService _authService;
@@ -19,12 +19,9 @@ public sealed class AuthController : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        var currentAccount = HttpContext.Items[RequireVaiTroAttribute.CurrentAccountItemKey]
-            as TaiKhoan;
-
-        if (currentAccount is not null)
+        if (HttpContext.Items[AuthItems.VaiTro] is VaiTro currentRole)
         {
-            return RedirectForRole(currentAccount.VaiTro);
+            return RedirectForRole(currentRole);
         }
 
         return View(new LoginViewModel());
