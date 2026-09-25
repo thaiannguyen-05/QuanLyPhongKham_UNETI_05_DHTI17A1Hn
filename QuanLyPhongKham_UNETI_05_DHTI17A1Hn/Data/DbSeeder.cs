@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;

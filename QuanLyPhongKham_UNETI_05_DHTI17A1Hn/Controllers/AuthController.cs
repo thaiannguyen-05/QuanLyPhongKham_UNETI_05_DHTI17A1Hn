@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
+
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
@@ -37,7 +39,18 @@ public sealed class AuthController : Controller
             return View(model);
         }
 
-        var result = await _authService.LoginAsync(model);
+        AuthResult result;
+        try
+        {
+            result = await _authService.LoginAsync(model.Username, model.Password);
+        }
+        catch (Exception)
+        {
+            ModelState.AddModelError(string.Empty, "Không thể đăng nhập lúc này, vui lòng thử lại.");
+            model.Password = string.Empty;
+            return View(model);
+        }
+
         if (!result.Succeeded || result.Account is null)
         {
             ModelState.AddModelError(

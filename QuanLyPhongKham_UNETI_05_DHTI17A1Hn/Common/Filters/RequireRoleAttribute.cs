@@ -6,7 +6,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class RequireRoleAttribute : TypeFilterAttribute

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 
 public class Doctor
 {

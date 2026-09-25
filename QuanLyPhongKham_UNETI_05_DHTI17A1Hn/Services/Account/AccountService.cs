@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account.Dto;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
@@ -10,6 +9,7 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
 public sealed class AccountService : IAccountService
 {
     private const string DuplicateUsernameMessage = "Tên đăng nhập đã tồn tại.";
+    private const string NotFoundMessage = "Không tìm thấy tài khoản.";
 
     private readonly AppDbContext _context;
 
@@ -18,13 +18,13 @@ public sealed class AccountService : IAccountService
         _context = context;
     }
 
-    public async Task<IReadOnlyList<AccountListViewModel>> GetListAsync(
+    public async Task<IReadOnlyList<AccountListDto>> GetListAsync(
         CancellationToken cancellationToken = default)
     {
         return await _context.Accounts
             .AsNoTracking()
             .OrderBy(account => account.Username)
-            .Select(account => new AccountListViewModel
+            .Select(account => new AccountListDto
             {
                 Id = account.Id,
                 Username = account.Username,
@@ -36,14 +36,14 @@ public sealed class AccountService : IAccountService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<AccountFormViewModel?> GetForEditAsync(
+    public async Task<AccountDetailDto> GetByIdAsync(
         int id,
         CancellationToken cancellationToken = default)
     {
-        return await _context.Accounts
+        var dto = await _context.Accounts
             .AsNoTracking()
             .Where(account => account.Id == id)
-            .Select(account => new AccountFormViewModel
+            .Select(account => new AccountDetailDto
             {
                 Id = account.Id,
                 Username = account.Username,
@@ -53,100 +53,112 @@ public sealed class AccountService : IAccountService
                 Status = account.Status
             })
             .SingleOrDefaultAsync(cancellationToken);
+
+        if (dto is null)
+        {
+            throw new KeyNotFoundException(NotFoundMessage);
+        }
+
+        return dto;
     }
 
-    public async Task<AccountSaveResult> CreateAsync(
-        AccountFormViewModel model,
+    public async Task CreateAsync(
+        CreateAccountDto dto,
         CancellationToken cancellationToken = default)
     {
-        var username = ValidateUsername(model.Username);
-        if (username is null)
+        ArgumentNullException.ThrowIfNull(dto);
+        dto.Username = dto.Username?.Trim() ?? string.Empty;
+        dto.FullName = dto.FullName?.Trim() ?? string.Empty;
+        dto.Email = string.IsNullOrWhiteSpace(dto.Email) ? null : dto.Email.Trim();
+        if (string.IsNullOrWhiteSpace(dto.Password))
         {
-            return AccountSaveResult.Failure(
-                nameof(model.Username),
-                "Tên đăng nhập là bắt buộc.");
+            dto.Password = string.Empty;
         }
 
-        if (string.IsNullOrWhiteSpace(model.Password))
-        {
-            return AccountSaveResult.Failure(
-                nameof(model.Password),
-                "Mật khẩu là bắt buộc.");
-        }
+        var username = dto.Username;
 
-        var roleError = ValidateRole(model.Role);
-        if (roleError is not null)
-        {
-            return roleError;
-        }
-
-        if (await IsDuplicateAsync(username, null, cancellationToken))
-        {
-            return AccountSaveResult.Failure(
-                nameof(model.Username),
-                DuplicateUsernameMessage);
-        }
-
-        var account = new Models.Account
+        var account = new Models.Schema.Account
         {
             Username = username,
-            PasswordHash = PasswordHasher.Hash(model.Password),
-            Role = model.Role!.Value,
+            PasswordHash = PasswordHasher.Hash(dto.Password),
+            FullName = dto.FullName,
+            Email = dto.Email,
+            Role = dto.Role!.Value,
+            Status = dto.Status ?? AccountStatus.Active
         };
-        ApplyCommon(account, model, username);
 
         _context.Accounts.Add(account);
-        return await SaveWithDuplicateHandlingAsync(account, username, cancellationToken);
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            _context.Entry(account).State = EntityState.Detached;
+
+            if (await _context.Accounts.AnyAsync(item => item.Username == username, cancellationToken))
+            {
+                throw new InvalidOperationException(DuplicateUsernameMessage);
+            }
+
+            throw;
+        }
     }
 
-    public async Task<AccountSaveResult> UpdateAsync(
+    public async Task UpdateAsync(
         int id,
-        AccountFormViewModel model,
+        UpdateAccountDto dto,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(dto);
+        dto.Username = dto.Username?.Trim() ?? string.Empty;
+        dto.FullName = dto.FullName?.Trim() ?? string.Empty;
+        dto.Email = string.IsNullOrWhiteSpace(dto.Email) ? null : dto.Email.Trim();
+        if (string.IsNullOrWhiteSpace(dto.Password))
+        {
+            dto.Password = null;
+        }
+
         var account = await _context.Accounts
             .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
 
         if (account is null)
         {
-            return AccountSaveResult.Failure(
-                nameof(model.Id),
-                "Không tìm thấy tài khoản.");
+            throw new KeyNotFoundException(NotFoundMessage);
         }
 
-        var username = ValidateUsername(model.Username);
-        if (username is null)
-        {
-            return AccountSaveResult.Failure(
-                nameof(model.Username),
-                "Tên đăng nhập là bắt buộc.");
-        }
-
-        var roleError = ValidateRole(model.Role);
-        if (roleError is not null)
-        {
-            return roleError;
-        }
-
-        if (await IsDuplicateAsync(username, id, cancellationToken))
-        {
-            return AccountSaveResult.Failure(
-                nameof(model.Username),
-                DuplicateUsernameMessage);
-        }
+        var username = dto.Username;
 
         account.Username = username;
-        ApplyCommon(account, model, username);
+        account.FullName = dto.FullName;
+        account.Email = dto.Email;
+        account.Role = dto.Role!.Value;
+        account.Status = dto.Status ?? AccountStatus.Active;
 
-        if (!string.IsNullOrWhiteSpace(model.Password))
+        if (!string.IsNullOrWhiteSpace(dto.Password))
         {
-            account.PasswordHash = PasswordHasher.Hash(model.Password);
+            account.PasswordHash = PasswordHasher.Hash(dto.Password);
         }
 
-        return await SaveWithDuplicateHandlingAsync(account, username, cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            if (await _context.Accounts.AnyAsync(
+                item => item.Username == username && item.Id != id,
+                cancellationToken))
+            {
+                throw new InvalidOperationException(DuplicateUsernameMessage);
+            }
+
+            throw;
+        }
     }
 
-    public async Task<bool> SetLockAsync(
+    public async Task SetLockAsync(
         int id,
         bool isLocked,
         CancellationToken cancellationToken = default)
@@ -156,87 +168,12 @@ public sealed class AccountService : IAccountService
 
         if (account is null)
         {
-            return false;
+            throw new KeyNotFoundException(NotFoundMessage);
         }
 
         account.Status = isLocked
             ? AccountStatus.Locked
             : AccountStatus.Active;
         await _context.SaveChangesAsync(cancellationToken);
-        return true;
-    }
-
-    private static string? ValidateUsername(string? username)
-    {
-        var trimmed = username?.Trim() ?? string.Empty;
-        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
-    }
-
-    private static AccountSaveResult? ValidateRole(Role? role)
-    {
-        return role.HasValue
-            ? null
-            : AccountSaveResult.Failure(
-                nameof(AccountFormViewModel.Role),
-                "Vai trò là bắt buộc.");
-    }
-
-    private static void ApplyCommon(
-        Models.Account account,
-        AccountFormViewModel model,
-        string username)
-    {
-        account.Username = username;
-        account.FullName = model.FullName.Trim();
-        account.Email = NormalizeEmail(model.Email);
-        account.Role = model.Role!.Value;
-        account.Status = model.Status ?? AccountStatus.Active;
-    }
-
-    private async Task<bool> IsDuplicateAsync(
-        string username,
-        int? id,
-        CancellationToken cancellationToken)
-    {
-        return id.HasValue
-            ? await _context.Accounts.AnyAsync(
-                account => account.Username == username
-                    && account.Id != id.Value,
-                cancellationToken)
-            : await _context.Accounts.AnyAsync(
-                account => account.Username == username,
-                cancellationToken);
-    }
-
-    private async Task<AccountSaveResult> SaveWithDuplicateHandlingAsync(
-        Models.Account account,
-        string username,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            await _context.SaveChangesAsync(cancellationToken);
-            return AccountSaveResult.Success();
-        }
-        catch (DbUpdateException)
-        {
-            _context.Entry(account).State = EntityState.Detached;
-
-            if (await _context.Accounts.AnyAsync(
-                    item => item.Username == username,
-                    cancellationToken))
-            {
-                return AccountSaveResult.Failure(
-                    nameof(AccountFormViewModel.Username),
-                    DuplicateUsernameMessage);
-            }
-
-            throw;
-        }
-    }
-
-    private static string? NormalizeEmail(string? email)
-    {
-        return string.IsNullOrWhiteSpace(email) ? null : email.Trim();
     }
 }

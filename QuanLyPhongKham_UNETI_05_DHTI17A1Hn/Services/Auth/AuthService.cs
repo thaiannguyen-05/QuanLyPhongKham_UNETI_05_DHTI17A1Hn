@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
@@ -15,14 +14,19 @@ public sealed class AuthService : IAuthService
     }
 
     public async Task<AuthResult> LoginAsync(
-        LoginViewModel model,
+        string username,
+        string password,
         CancellationToken cancellationToken = default)
     {
-        var username = model.Username.Trim();
+        var trimmedUsername = (username ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(trimmedUsername))
+        {
+            return AuthResult.Failure("Tên đăng nhập hoặc mật khẩu không đúng.");
+        }
         var account = await _context.Accounts
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                item => item.Username == username,
+                item => item.Username == trimmedUsername,
                 cancellationToken);
 
         if (account is null)
@@ -37,7 +41,7 @@ public sealed class AuthService : IAuthService
                 isLocked: true);
         }
 
-        if (!PasswordHasher.Verify(model.Password, account.PasswordHash))
+        if (!PasswordHasher.Verify(password ?? string.Empty, account.PasswordHash))
         {
             return AuthResult.Failure("Tên đăng nhập hoặc mật khẩu không đúng.");
         }

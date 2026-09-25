@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Filters;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Account.Mapping;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
@@ -20,8 +21,11 @@ public sealed class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var accounts = await _accountService.GetListAsync(cancellationToken);
-        return View(new AccountIndexViewModel { Accounts = accounts });
+        var dtos = await _accountService.GetListAsync(cancellationToken);
+        return View(new AccountIndexViewModel
+        {
+            Accounts = dtos.Select(AccountMapping.ToListViewModel).ToList()
+        });
     }
 
     [HttpGet]
@@ -40,31 +44,21 @@ public sealed class AccountController : Controller
         AccountFormViewModel model,
         CancellationToken cancellationToken)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var result = await _accountService.CreateAsync(model, cancellationToken);
-            if (result.Succeeded)
-            {
-                TempData["Success"] = "Tạo tài khoản thành công.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            AddServiceError(result);
+            return View(model);
         }
 
-        return View(model);
+        await _accountService.CreateAsync(AccountMapping.ToCreateDto(model), cancellationToken);
+        TempData["Success"] = "Tạo tài khoản thành công.";
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {
-        var model = await _accountService.GetForEditAsync(id, cancellationToken);
-        if (model is null)
-        {
-            return NotFound();
-        }
-
-        return View(model);
+        var dto = await _accountService.GetByIdAsync(id, cancellationToken);
+        return View(AccountMapping.ToFormViewModel(dto));
     }
 
     [HttpPost]
@@ -79,19 +73,14 @@ public sealed class AccountController : Controller
             return BadRequest();
         }
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var result = await _accountService.UpdateAsync(id, model, cancellationToken);
-            if (result.Succeeded)
-            {
-                TempData["Success"] = "Cập nhật tài khoản thành công.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            AddServiceError(result);
+            return View(model);
         }
 
-        return View(model);
+        await _accountService.UpdateAsync(id, AccountMapping.ToUpdateDto(model), cancellationToken);
+        TempData["Success"] = "Cập nhật tài khoản thành công.";
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
@@ -108,26 +97,10 @@ public sealed class AccountController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var updated = await _accountService.SetLockAsync(id, isLocked, cancellationToken);
-        if (!updated)
-        {
-            return NotFound();
-        }
-
+        await _accountService.SetLockAsync(id, isLocked, cancellationToken);
         TempData["Success"] = isLocked
             ? "Đã khóa tài khoản."
             : "Đã mở khóa tài khoản.";
         return RedirectToAction(nameof(Index));
-    }
-
-    private void AddServiceError(AccountSaveResult result)
-    {
-        if (!string.IsNullOrWhiteSpace(result.ErrorField))
-        {
-            ModelState.AddModelError(result.ErrorField, result.ErrorMessage ?? "Không thể lưu tài khoản.");
-            return;
-        }
-
-        ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Không thể lưu tài khoản.");
     }
 }

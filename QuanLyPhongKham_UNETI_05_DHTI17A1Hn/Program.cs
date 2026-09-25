@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
+
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Guards;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<ServiceExceptionFilter>();
+});
 
 // Cau hinh DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -18,6 +24,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddScoped<ServiceExceptionFilter>();
 
 builder.Services.AddSession(options =>
 {

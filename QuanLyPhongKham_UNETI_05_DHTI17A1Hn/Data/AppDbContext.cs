@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data
 {
     public class AppDbContext : DbContext
