@@ -1,0 +1,20 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts.AccountFormViewModel
+@{
+    ViewData["Title"] = "Thêm tài khoản";
+}
+
+<h1 class="h3 mb-3">Thêm tài khoản</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <partial name="_AccountForm" />
+            <button type="submit" class="btn btn-primary">Lưu</button>
+            <a class="btn btn-secondary" asp-action="Index">Hủy</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

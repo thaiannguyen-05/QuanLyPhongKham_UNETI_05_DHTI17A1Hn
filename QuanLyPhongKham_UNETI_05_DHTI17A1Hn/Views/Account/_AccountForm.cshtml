@@ -1,0 +1,55 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts.AccountFormViewModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="Username" class="form-label"></label>
+    <input asp-for="Username" class="form-control" autocomplete="username" />
+    <span asp-validation-for="Username" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Password" class="form-label"></label>
+    <input asp-for="Password" class="form-control" autocomplete="new-password" />
+    @if (ViewData["PasswordHint"] is string hint)
+    {
+        <div class="form-text">@hint</div>
+    }
+    <span asp-validation-for="Password" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="FullName" class="form-label"></label>
+    <input asp-for="FullName" class="form-control" />
+    <span asp-validation-for="FullName" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Email" class="form-label"></label>
+    <input asp-for="Email" class="form-control" />
+    <span asp-validation-for="Email" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Role" class="form-label"></label>
+    <select asp-for="Role" class="form-select">
+        <option value="">-- Chọn vai trò --</option>
+        @foreach (var role in Enum.GetValues<Role>())
+        {
+            <option value="@role">@role</option>
+        }
+    </select>
+    <span asp-validation-for="Role" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Status" class="form-label"></label>
+    <select asp-for="Status" class="form-select">
+        <option value="">-- Chọn trạng thái --</option>
+        @foreach (var status in Enum.GetValues<AccountStatus>())
+        {
+            <option value="@status">@status</option>
+        }
+    </select>
+    <span asp-validation-for="Status" class="text-danger"></span>
+</div>

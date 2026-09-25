@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="~/QuanLyPhongKham_UNETI_05_DHTI17A1Hn.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var currentRole = Context.Items[AuthItems.Role] as Role?;
+        var currentName = Context.Items[AuthItems.FullName] as string;
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -23,8 +27,25 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (currentRole == Role.Admin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">Quản lý tài khoản</a>
+                            </li>
+                        }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            @if (!string.IsNullOrWhiteSpace(currentName))
+                            {
+                                <span class="navbar-text me-2">@currentName</span>
+                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link">Đăng xuất</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+                            }
                         </li>
                     </ul>
                 </div>

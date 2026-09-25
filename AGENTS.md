@@ -48,7 +48,7 @@ Format:
 
 ## 6. Kiến trúc Controller – Service — BẮT BUỘC
 
-- Controller mỏng: chỉ nhận request, check `ModelState`, gọi `Services/*/*Service`, trả View/Redirect, gắn `[Authorize]/[ValidateAntiForgeryToken]`, `try-catch` exception có sẵn của .NET rồi trả View lỗi.
+- Controller mỏng: chỉ nhận request, check `ModelState`, gọi `Services/*/*Service`, trả View/Redirect, gắn `[RequireRole]/[ValidateAntiForgeryToken]`. Không `try-catch` từng action — lỗi nghiệp vụ do global `Filters/Guards/ServiceExceptionFilter` (đăng ký trong `Program.cs`) chuyển thành `ModelState` + trả lại View (`ArgumentException` theo field, `InvalidOperationException` lỗi chung) hoặc `NotFound` (`KeyNotFoundException`).
 - Cấm trong Controller: `DbContext`, LINQ (`Where/ToList/...`), SQL/`SaveChanges`, validation nghiệp vụ, `new Service()` thủ công.
 - Service dày: chứa LINQ + EF Core + validation nghiệp vụ. Mỗi nghiệp vụ 1 subfolder `Services/<Tên>/` gồm `I<Tên>Service.cs + <Tên>Service.cs`, method English (`GetAllAsync/SearchAsync/CreateAsync...`). Được inject Service khác qua DI. Lỗi nghiệp vụ `throw` exception có sẵn của .NET (`InvalidOperationException/ArgumentException/KeyNotFoundException...`) với message Tiếng Việt.
 - DI: đăng ký `Interface + AddScoped` trong `Program.cs`.

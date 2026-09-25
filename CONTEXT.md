@@ -14,6 +14,12 @@ _Avoid_: Admin viết tắt trong docs, Người dùng chung chung
 Người đăng ký và sử dụng dịch vụ khám bệnh.
 _Avoid_: Khách hàng, Client, User chung chung
 
+### Tài khoản đăng nhập
+
+**Tài khoản**:
+Thông tin đăng nhập hệ thống của một Quản trị viên hoặc một Bệnh nhân.
+_Avoid_: User chung chung, Client
+
 ### Nghiệp vụ cốt lõi
 
 **Chuyên khoa**:
