@@ -1,4 +1,4 @@
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models;
 
 public sealed class AccountIndexViewModel
 {

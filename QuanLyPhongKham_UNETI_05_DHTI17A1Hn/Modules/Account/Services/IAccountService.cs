@@ -1,6 +1,6 @@
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account.Dto;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services.Dto;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
 
 public interface IAccountService
 {

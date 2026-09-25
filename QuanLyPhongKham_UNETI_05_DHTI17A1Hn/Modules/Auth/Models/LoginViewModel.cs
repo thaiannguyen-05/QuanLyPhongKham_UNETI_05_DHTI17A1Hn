@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Models;
 
 public sealed class LoginViewModel
 {

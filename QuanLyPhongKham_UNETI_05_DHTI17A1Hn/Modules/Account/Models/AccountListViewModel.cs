@@ -1,8 +1,8 @@
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account.Dto;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models;
 
-public sealed class AccountDetailDto
+public sealed class AccountListViewModel
 {
     public int Id { get; set; }
 

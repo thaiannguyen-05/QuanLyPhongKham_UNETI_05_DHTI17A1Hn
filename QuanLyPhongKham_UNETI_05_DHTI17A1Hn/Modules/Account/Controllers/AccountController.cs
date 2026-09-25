@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Account.Mapping;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models.Mapping;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Controllers;
 
 [RequireRole(Role.Admin)]
 public sealed class AccountController : Controller

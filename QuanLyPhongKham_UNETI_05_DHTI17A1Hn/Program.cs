@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Guards;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,10 +49,12 @@ using (var scope = app.Services.CreateScope())
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    // Chua can HTTPS: tam tat HSTS de chay HTTP thuan.
+    // Khi can HTTPS thi mo lai: app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Chua can HTTPS: tam tat redirect de chay HTTP thuan.
+// Khi can HTTPS thi mo lai: app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 

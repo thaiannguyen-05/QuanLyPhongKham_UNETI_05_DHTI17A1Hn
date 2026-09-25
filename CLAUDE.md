@@ -46,11 +46,13 @@ Format:
 - Chi tiết còn treo (sẽ grill tiếp): phân biệt Lịch khám vs Phiếu đăng ký khám (Q6), Auth Identity vs custom (Q7). Không tự chốt khi chưa xác nhận với chủ repo.
 - Giữ `AGENTS.md` và `CLAUDE.md` đồng bộ khi sửa đổi.
 
-## 6. Kiến trúc Controller – Service — BẮT BUỘC
+## 6. Kiến trúc Modules — BẮT BUỘC
 
-- Controller mỏng: chỉ nhận request, check `ModelState`, gọi `Services/*/*Service`, trả View/Redirect, gắn `[RequireRole]/[ValidateAntiForgeryToken]`. Không `try-catch` từng action — lỗi nghiệp vụ do global `Filters/Guards/ServiceExceptionFilter` (đăng ký trong `Program.cs`) chuyển thành `ModelState` + trả lại View (`ArgumentException` theo field, `InvalidOperationException` lỗi chung) hoặc `NotFound` (`KeyNotFoundException`).
+- Backend theo feature: mỗi nghiệp vụ 1 folder `Modules/<Tên>/` gồm `Controllers/`, `Services/`, `Models/`. `Views/<Tên>/` tách riêng, không nằm trong `Modules/`.
+- Controller mỏng: chỉ nhận request, check `ModelState`, gọi `Modules/<Tên>/Services/*Service`, trả View/Redirect, gắn `[RequireRole]/[ValidateAntiForgeryToken]`. Không `try-catch` từng action — lỗi nghiệp vụ do global `Filters/Guards/ServiceExceptionFilter` (đăng ký trong `Program.cs`) chuyển thành `ModelState` + trả lại View (`ArgumentException` theo field, `InvalidOperationException` lỗi chung) hoặc `NotFound` (`KeyNotFoundException`).
 - Cấm trong Controller: `DbContext`, LINQ (`Where/ToList/...`), SQL/`SaveChanges`, validation nghiệp vụ, `new Service()` thủ công.
-- Service dày: chứa LINQ + EF Core + validation nghiệp vụ. Mỗi nghiệp vụ 1 subfolder `Services/<Tên>/` gồm `I<Tên>Service.cs + <Tên>Service.cs`, method English (`GetAllAsync/SearchAsync/CreateAsync...`). Được inject Service khác qua DI. Lỗi nghiệp vụ `throw` exception có sẵn của .NET (`InvalidOperationException/ArgumentException/KeyNotFoundException...`) với message Tiếng Việt.
+- Service dày: chứa LINQ + EF Core + validation nghiệp vụ. Mỗi `Modules/<Tên>/Services/` gồm `I<Tên>Service.cs + <Tên>Service.cs`, method English (`GetAllAsync/SearchAsync/CreateAsync...`). Được inject Service khác qua DI. Lỗi nghiệp vụ `throw` exception có sẵn của .NET (`InvalidOperationException/ArgumentException/KeyNotFoundException...`) với message Tiếng Việt.
+- Namespace: `...Modules.<Tên>.Controllers`, `...Modules.<Tên>.Services`, `...Modules.<Tên>.Models`.
 - DI: đăng ký `Interface + AddScoped` trong `Program.cs`.
 - Ví dụ đúng (tìm kiếm Bác sĩ theo tên + Chuyên khoa): Controller gọi `await _doctorService.SearchAsync(name, specialtyId)`; LINQ `Where` nằm trong `DoctorService.SearchAsync`, không nằm ở Controller.
-- Phạm vi: áp cho code mới từ nay về sau. Chi tiết cây thư mục xem `STRUCTURE.md`. Không ghi rule này vào `CONTEXT.md` (file đó chỉ là glossary).
+- Phạm vi: pilot `Modules/Auth/` đã xong; module mới làm theo cấu trúc này. Chi tiết cây thư mục xem `STRUCTURE.md`. Không ghi rule này vào `CONTEXT.md` (file đó chỉ là glossary).

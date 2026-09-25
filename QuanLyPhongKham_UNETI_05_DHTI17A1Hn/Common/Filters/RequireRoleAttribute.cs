@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
 

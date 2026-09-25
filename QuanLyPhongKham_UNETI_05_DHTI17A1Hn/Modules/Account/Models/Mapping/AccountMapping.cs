@@ -1,7 +1,7 @@
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Accounts;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Account.Dto;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services.Dto;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Account.Mapping;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Models.Mapping;
 
 public static class AccountMapping
 {

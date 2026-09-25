@@ -3,10 +3,10 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Filters;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Auth;
-using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Services.Auth;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Models;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 
-namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Controllers;
+namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Controllers;
 
 [RequireRole]
 public sealed class AuthController : Controller
