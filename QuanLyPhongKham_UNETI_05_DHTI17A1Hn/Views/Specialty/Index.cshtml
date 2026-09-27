@@ -1,6 +1,55 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Models.SpecialtyIndexViewModel
 @{
     ViewData["Title"] = "Quản lý chuyên khoa";
 }
 
-<h1 class="h3">Quản lý chuyên khoa</h1>
-<p class="text-muted">Khu vực quản trị viên. CRUD chuyên khoa sẽ được phát triển ở module tiếp theo.</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Quản lý chuyên khoa</h1>
+    <a class="btn btn-primary" asp-action="Create">Thêm chuyên khoa</a>
+</div>
+
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success">@success</div>
+}
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên chuyên khoa</th>
+                    <th>Mô tả</th>
+                    <th>Số bác sĩ</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var specialty in Model.Specialties)
+            {
+                <tr>
+                    <td>@specialty.Id</td>
+                    <td>@specialty.Name</td>
+                    <td>@(specialty.Description ?? "-")</td>
+                    <td>@specialty.DoctorCount</td>
+                    <td>@specialty.Status</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@specialty.Id">Chi tiết</a>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@specialty.Id">Sửa</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@specialty.Id">Xóa</a>
+                        <form class="d-inline" asp-action="SetStatus" asp-route-id="@specialty.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="status" value="@(specialty.Status == SpecialtyStatus.Active ? SpecialtyStatus.Inactive : SpecialtyStatus.Active)" />
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">
+                                @(specialty.Status == SpecialtyStatus.Active ? "Tạm ngừng" : "Kích hoạt")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

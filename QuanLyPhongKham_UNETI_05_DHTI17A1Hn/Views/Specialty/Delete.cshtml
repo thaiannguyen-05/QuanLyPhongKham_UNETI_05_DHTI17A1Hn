@@ -1,0 +1,31 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Models.SpecialtyDeleteViewModel
+@{
+    ViewData["Title"] = "Xóa chuyên khoa";
+}
+
+<h1 class="h3 mb-3">Xóa chuyên khoa</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <p>Bạn có chắc muốn xóa <strong>@Model.Name</strong> không?</p>
+        <p class="text-muted">Số bác sĩ đang thuộc: @Model.DoctorCount</p>
+
+        @if (Model.DoctorCount > 0)
+        {
+            <div class="alert alert-warning">
+                Không được xóa: còn bác sĩ thuộc chuyên khoa. Hãy chuyển Tạm ngừng.
+            </div>
+        }
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            @if (Model.DoctorCount == 0)
+            {
+                <button type="submit" class="btn btn-danger">Xóa</button>
+            }
+            <a class="btn btn-secondary" asp-action="Index">Hủy</a>
+        </form>
+    </div>
+</div>

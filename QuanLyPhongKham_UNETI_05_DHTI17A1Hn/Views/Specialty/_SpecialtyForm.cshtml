@@ -1,0 +1,27 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Models.SpecialtyFormViewModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Status" class="form-label"></label>
+    <select asp-for="Status" class="form-select">
+        <option value="">-- Chọn trạng thái --</option>
+        @foreach (var status in Enum.GetValues<SpecialtyStatus>())
+        {
+            <option value="@status">@status</option>
+        }
+    </select>
+    <span asp-validation-for="Status" class="text-danger"></span>
+</div>
