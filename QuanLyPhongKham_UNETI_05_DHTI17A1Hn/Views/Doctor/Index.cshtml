@@ -107,44 +107,47 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th scope="col" style="width: 60px;" class="text-center">STT</th>
+                    <th scope="col" style="width: 60px;">Mã</th>
                     <th scope="col">Họ và tên</th>
                     <th scope="col">Chuyên khoa</th>
-                    <th scope="col">Liên hệ</th>
+                    <th scope="col">Trình độ</th>
                     <th scope="col" class="text-center">Kinh nghiệm</th>
                     <th scope="col" class="text-end">Phí khám</th>
+                    <th scope="col">Số ĐT</th>
                     <th scope="col" class="text-center">Trạng thái</th>
-                    <th scope="col" class="text-center" style="width: 180px;">Thao tác</th>
+                    <th scope="col" class="text-center" style="width: 160px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @if (Model.Doctors.Any())
                 {
-                    var index = (Model.CurrentPage - 1) * Model.PageSize + 1;
                     foreach (var doc in Model.Doctors)
                     {
                         <tr>
-                            <td class="text-center text-muted fw-bold">@(index++)</td>
+                            <td class="text-muted fw-bold">#@doc.Id</td>
                             <td>
                                 <div class="fw-bold text-dark">@doc.FullName</div>
-                                <small class="text-muted">@(doc.Qualification ?? "Bác sĩ")</small>
+                                @if (!string.IsNullOrEmpty(doc.Gender))
+                                {
+                                    <span class="badge bg-light text-secondary border small">@doc.Gender</span>
+                                }
                             </td>
                             <td>
                                 <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">
-                                    🏥 @doc.SpecialtyName
+                                    @doc.SpecialtyName
                                 </span>
                             </td>
                             <td>
-                                <div><small>📞 @(doc.Phone ?? "--")</small></div>
-                                <div><small class="text-muted">✉️ @(doc.Email ?? "--")</small></div>
+                                <small class="text-muted">@(doc.Qualification ?? "--")</small>
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-light text-dark border">
-                                    @doc.YearsOfExperience năm
-                                </span>
+                                @doc.YearsOfExperience năm
                             </td>
                             <td class="text-end fw-semibold text-primary">
-                                @doc.ConsultationFee.ToString("N0") đ
+                                @doc.ConsultationFee.ToString("N0") VNĐ
+                            </td>
+                            <td>
+                                <small>@(doc.Phone ?? "--")</small>
                             </td>
                             <td class="text-center">
                                 @switch (doc.Status)
@@ -179,7 +182,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
+                        <td colspan="9" class="text-center py-5 text-muted">
                             <p class="mb-1 fs-5">🔍 Không tìm thấy bác sĩ nào</p>
                             <small>Hãy thử thay đổi điều kiện tìm kiếm hoặc thêm bác sĩ mới.</small>
                         </td>
