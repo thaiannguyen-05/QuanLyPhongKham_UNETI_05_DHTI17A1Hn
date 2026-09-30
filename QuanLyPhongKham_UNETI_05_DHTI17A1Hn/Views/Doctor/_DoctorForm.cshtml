@@ -1,0 +1,72 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Models.DoctorFormViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="FullName" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="FullName" class="form-control" placeholder="Ví dụ: BSCKII. Trần Văn Hùng" />
+        <span asp-validation-for="FullName" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="SpecialtyId" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <select asp-for="SpecialtyId" asp-items="Model.SpecialtyList" class="form-select">
+            <option value="">-- Chọn chuyên khoa --</option>
+        </select>
+        <span asp-validation-for="SpecialtyId" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+        <input asp-for="DateOfBirth" class="form-control" type="date" />
+        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Gender" class="form-label fw-semibold"></label>
+        <select asp-for="Gender" class="form-select">
+            <option value="">-- Chọn giới tính --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Status" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<DoctorStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Phone" class="form-label fw-semibold"></label>
+        <input asp-for="Phone" class="form-control" placeholder="Ví dụ: 0912345678" />
+        <span asp-validation-for="Phone" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label fw-semibold"></label>
+        <input asp-for="Email" class="form-control" placeholder="Ví dụ: bacsi@phongkham.vn" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Qualification" class="form-label fw-semibold"></label>
+        <input asp-for="Qualification" class="form-control" placeholder="Ví dụ: Thạc sĩ, Bác sĩ CKI..." />
+        <span asp-validation-for="Qualification" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="YearsOfExperience" class="form-label fw-semibold"></label>
+        <input asp-for="YearsOfExperience" class="form-control" type="number" min="0" max="60" />
+        <span asp-validation-for="YearsOfExperience" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="ConsultationFee" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="ConsultationFee" class="form-control" type="number" step="any" min="1000" placeholder="Ví dụ: 300000" />
+        <span asp-validation-for="ConsultationFee" class="text-danger small"></span>
+    </div>
+</div>

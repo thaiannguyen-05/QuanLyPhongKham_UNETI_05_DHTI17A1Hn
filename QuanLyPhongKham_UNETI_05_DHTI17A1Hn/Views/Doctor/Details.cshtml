@@ -1,0 +1,86 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Models.DoctorDetailViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+@{
+    ViewData["Title"] = "Chi tiết bác sĩ";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">Hồ sơ chi tiết bác sĩ</h1>
+        <small class="text-muted">Mã bác sĩ: #@Model.Doctor.Id</small>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Doctor.Id">
+            ✏️ Chỉnh sửa
+        </a>
+        <a class="btn btn-outline-secondary" asp-action="Index">
+            &larr; Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Thông tin cá nhân</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Họ và tên:</dt>
+                        <dd class="col-sm-8 fw-bold">@Model.Doctor.FullName</dd>
+
+                        <dt class="col-sm-4 text-muted">Giới tính:</dt>
+                        <dd class="col-sm-8">@(Model.Doctor.Gender ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Ngày sinh:</dt>
+                        <dd class="col-sm-8">@(Model.Doctor.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Số điện thoại:</dt>
+                        <dd class="col-sm-8">@(Model.Doctor.Phone ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Email:</dt>
+                        <dd class="col-sm-8">@(Model.Doctor.Email ?? "Chưa cập nhật")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Thông tin chuyên môn & Công tác</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Chuyên khoa:</dt>
+                        <dd class="col-sm-8"><span class="badge bg-info text-dark fs-6">@Model.Doctor.SpecialtyName</span></dd>
+
+                        <dt class="col-sm-4 text-muted">Trình độ:</dt>
+                        <dd class="col-sm-8">@(Model.Doctor.Qualification ?? "Bác sĩ")</dd>
+
+                        <dt class="col-sm-4 text-muted">Kinh nghiệm:</dt>
+                        <dd class="col-sm-8">@Model.Doctor.YearsOfExperience năm</dd>
+
+                        <dt class="col-sm-4 text-muted">Phí khám:</dt>
+                        <dd class="col-sm-8 fw-bold text-success fs-5">@Model.Doctor.ConsultationFee.ToString("N0") VNĐ</dd>
+
+                        <dt class="col-sm-4 text-muted">Trạng thái:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Doctor.Status == DoctorStatus.Working)
+                            {
+                                <span class="badge bg-success">Đang làm việc</span>
+                            }
+                            else if (Model.Doctor.Status == DoctorStatus.OnLeave)
+                            {
+                                <span class="badge bg-warning text-dark">Tạm nghỉ</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Ngừng làm việc</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Số lịch khám:</dt>
+                        <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Doctor.ScheduleCount lịch khám</span></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

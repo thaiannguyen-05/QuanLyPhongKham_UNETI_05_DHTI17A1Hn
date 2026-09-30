@@ -32,6 +32,7 @@ public sealed class DoctorController : Controller
             SearchTerm = filter.SearchTerm,
             SpecialtyId = filter.SpecialtyId,
             Status = filter.Status,
+            Gender = filter.Gender,
             MinFee = filter.MinFee,
             MaxFee = filter.MaxFee,
             SortBy = filter.SortBy,

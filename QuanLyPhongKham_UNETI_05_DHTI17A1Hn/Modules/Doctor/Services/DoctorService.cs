@@ -53,7 +53,13 @@ public sealed class DoctorService : IDoctorService
             query = query.Where(d => d.Status == filter.Status.Value);
         }
 
-        // 4. Lọc theo Phí khám (Khoảng giá)
+        // 4. Lọc theo Giới tính
+        if (!string.IsNullOrWhiteSpace(filter.Gender))
+        {
+            query = query.Where(d => d.Gender == filter.Gender);
+        }
+
+        // 5. Lọc theo Phí khám (Khoảng giá)
         if (filter.MinFee.HasValue)
         {
             query = query.Where(d => d.ConsultationFee >= filter.MinFee.Value);
@@ -66,42 +72,86 @@ public sealed class DoctorService : IDoctorService
         // Đếm tổng số bản ghi sau khi tìm kiếm/lọc
         var totalCount = await query.CountAsync(cancellationToken);
 
-        // 5. Sắp xếp
-        query = filter.SortBy switch
-        {
-            "name_desc" => query.OrderByDescending(d => d.FullName),
-            "name_asc" => query.OrderBy(d => d.FullName),
-            "fee_desc" => query.OrderByDescending(d => d.ConsultationFee),
-            "fee_asc" => query.OrderBy(d => d.ConsultationFee),
-            "exp_desc" => query.OrderByDescending(d => d.YearsOfExperience),
-            "exp_asc" => query.OrderBy(d => d.YearsOfExperience),
-            _ => query.OrderByDescending(d => d.Id)
-        };
-
-        // 6. Phân trang bằng Skip và Take trên Database
         var pageNumber = filter.PageNumber < 1 ? 1 : filter.PageNumber;
         var pageSize = filter.PageSize < 1 ? 5 : filter.PageSize;
 
-        var items = await query
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(d => new DoctorDto
+        List<DoctorDto> items;
+
+        if (filter.SortBy is "name_asc" or "name_desc")
+        {
+            var viCulture = new System.Globalization.CultureInfo("vi-VN");
+            var viComparer = StringComparer.Create(viCulture, ignoreCase: true);
+
+            var allFiltered = await query
+                .Select(d => new DoctorDto
+                {
+                    Id = d.Id,
+                    FullName = d.FullName,
+                    SpecialtyId = d.SpecialtyId,
+                    SpecialtyName = d.Specialty != null ? d.Specialty.Name : string.Empty,
+                    DateOfBirth = d.DateOfBirth,
+                    Gender = d.Gender,
+                    Phone = d.Phone,
+                    Email = d.Email,
+                    Qualification = d.Qualification,
+                    YearsOfExperience = d.YearsOfExperience,
+                    ConsultationFee = d.ConsultationFee,
+                    Status = d.Status,
+                    ScheduleCount = d.Schedules.Count()
+                })
+                .ToListAsync(cancellationToken);
+
+            if (filter.SortBy == "name_desc")
             {
-                Id = d.Id,
-                FullName = d.FullName,
-                SpecialtyId = d.SpecialtyId,
-                SpecialtyName = d.Specialty != null ? d.Specialty.Name : string.Empty,
-                DateOfBirth = d.DateOfBirth,
-                Gender = d.Gender,
-                Phone = d.Phone,
-                Email = d.Email,
-                Qualification = d.Qualification,
-                YearsOfExperience = d.YearsOfExperience,
-                ConsultationFee = d.ConsultationFee,
-                Status = d.Status,
-                ScheduleCount = d.Schedules.Count()
-            })
-            .ToListAsync(cancellationToken);
+                items = allFiltered
+                    .OrderByDescending(d => ExtractVietnameseNameParts(d.FullName).FirstName, viComparer)
+                    .ThenByDescending(d => ExtractVietnameseNameParts(d.FullName).MiddleAndLastName, viComparer)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            else
+            {
+                items = allFiltered
+                    .OrderBy(d => ExtractVietnameseNameParts(d.FullName).FirstName, viComparer)
+                    .ThenBy(d => ExtractVietnameseNameParts(d.FullName).MiddleAndLastName, viComparer)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+        }
+        else
+        {
+            query = filter.SortBy switch
+            {
+                "fee_desc" => query.OrderByDescending(d => d.ConsultationFee),
+                "fee_asc" => query.OrderBy(d => d.ConsultationFee),
+                "exp_desc" => query.OrderByDescending(d => d.YearsOfExperience),
+                "exp_asc" => query.OrderBy(d => d.YearsOfExperience),
+                _ => query.OrderByDescending(d => d.Id)
+            };
+
+            items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(d => new DoctorDto
+                {
+                    Id = d.Id,
+                    FullName = d.FullName,
+                    SpecialtyId = d.SpecialtyId,
+                    SpecialtyName = d.Specialty != null ? d.Specialty.Name : string.Empty,
+                    DateOfBirth = d.DateOfBirth,
+                    Gender = d.Gender,
+                    Phone = d.Phone,
+                    Email = d.Email,
+                    Qualification = d.Qualification,
+                    YearsOfExperience = d.YearsOfExperience,
+                    ConsultationFee = d.ConsultationFee,
+                    Status = d.Status,
+                    ScheduleCount = d.Schedules.Count()
+                })
+                .ToListAsync(cancellationToken);
+        }
 
         return (items, totalCount);
     }
@@ -224,5 +274,38 @@ public sealed class DoctorService : IDoctorService
                 Text = s.Name
             })
             .ToListAsync(cancellationToken);
+    }
+
+    private static (string FirstName, string MiddleAndLastName) ExtractVietnameseNameParts(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        // Loại bỏ các tiền tố học hàm, học vị thường gặp
+        var cleanName = System.Text.RegularExpressions.Regex.Replace(
+            fullName.Trim(),
+            @"^(PGS\.TS\.BS\.|GS\.TS\.BS\.|PGS\.TS\.|GS\.TS\.|TS\.BS\.|ThS\.BS\.|BSCKII\.|BSCKI\.|BS\.CKII\.|BS\.CKI\.|BSCK2\.|BSCK1\.|BSCKII|BSCKI|BS\.|ThS\.|TS\.|PGS\.|GS\.|BS)\s*",
+            "",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase).Trim();
+
+        var parts = cleanName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        if (parts.Length == 1)
+        {
+            return (parts[0], string.Empty);
+        }
+
+        // Từ cuối cùng là Tên chính (ví dụ: Bảo, Hùng, Loan, Nam, Thảo, ...)
+        var firstName = parts[^1];
+        // Các từ còn lại là Họ và tên đệm (ví dụ: Đỗ Quốc, Nguyễn Văn, Trần Thị Mai, ...)
+        var middleAndLastName = string.Join(" ", parts.Take(parts.Length - 1));
+
+        return (firstName, middleAndLastName);
     }
 }

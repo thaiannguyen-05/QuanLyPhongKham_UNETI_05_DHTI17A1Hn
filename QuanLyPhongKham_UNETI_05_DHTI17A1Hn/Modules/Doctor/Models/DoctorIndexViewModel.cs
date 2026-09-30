@@ -11,6 +11,7 @@ public sealed class DoctorIndexViewModel
     public string? SearchTerm { get; set; }
     public int? SpecialtyId { get; set; }
     public DoctorStatus? Status { get; set; }
+    public string? Gender { get; set; }
     public decimal? MinFee { get; set; }
     public decimal? MaxFee { get; set; }
     public string? SortBy { get; set; }
