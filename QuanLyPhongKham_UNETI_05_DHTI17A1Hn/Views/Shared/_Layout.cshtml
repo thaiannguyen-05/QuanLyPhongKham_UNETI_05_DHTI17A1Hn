@@ -38,6 +38,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="Index">Quản lý bác sĩ</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="Index">Quản lý bệnh nhân</a>
+                            </li>
+                        }
+                        @if (currentRole == Role.Patient)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="Me">Thông tin cá nhân</a>
+                            </li>
                         }
                         <li class="nav-item">
                             @if (!string.IsNullOrWhiteSpace(currentName))

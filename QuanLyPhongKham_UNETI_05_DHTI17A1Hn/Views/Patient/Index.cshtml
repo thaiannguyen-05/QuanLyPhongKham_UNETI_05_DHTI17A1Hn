@@ -1,0 +1,209 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Models.PatientIndexViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+@{
+    ViewData["Title"] = "Quản lý Bệnh nhân";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">🧑‍⚕️ Quản lý Bệnh nhân</h1>
+        <p class="text-muted mb-0 small">Danh sách hồ sơ bệnh nhân và tài khoản liên kết</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary shadow-sm">
+        ➕ Thêm bệnh nhân mới
+    </a>
+</div>
+
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @success
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ⚠️ @error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-light py-3">
+        <h6 class="mb-0 fw-semibold text-secondary">🔍 Bộ lọc & Tìm kiếm</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Từ khóa</label>
+                    <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Tên, SĐT, email..." />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Trạng thái</label>
+                    <select name="Status" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="Active" selected="@(Model.Status == PatientStatus.Active)">Hoạt động</option>
+                        <option value="Inactive" selected="@(Model.Status == PatientStatus.Inactive)">Tạm ngừng</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Sắp xếp theo</label>
+                    <select name="SortBy" class="form-select">
+                        <option value="" selected="@(string.IsNullOrEmpty(Model.SortBy))">Mặc định (Mới nhất)</option>
+                        <option value="name_asc" selected="@(Model.SortBy == "name_asc")">Họ tên (A -&gt; Z)</option>
+                        <option value="name_desc" selected="@(Model.SortBy == "name_desc")">Họ tên (Z -&gt; A)</option>
+                        <option value="oldest" selected="@(Model.SortBy == "oldest")">Đăng ký sớm nhất</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        🔍 Lọc
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        🔄 Đặt lại
+                    </a>
+                </div>
+            </div>
+            <div class="mt-2">
+                <span class="text-muted small">
+                    Tổng cộng: <strong>@Model.TotalItems</strong> bệnh nhân
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" style="width: 60px;">Mã</th>
+                    <th scope="col">Họ và tên</th>
+                    <th scope="col">Ngày sinh</th>
+                    <th scope="col">Số ĐT</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Tài khoản</th>
+                    <th scope="col" class="text-center">Trạng thái</th>
+                    <th scope="col" class="text-center" style="width: 160px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Patients.Any())
+                {
+                    foreach (var p in Model.Patients)
+                    {
+                        <tr>
+                            <td class="text-muted fw-bold">#@p.Id</td>
+                            <td>
+                                <div class="fw-bold text-dark">@p.FullName</div>
+                                @if (!string.IsNullOrEmpty(p.Gender))
+                                {
+                                    <span class="badge bg-light text-secondary border small">@p.Gender</span>
+                                }
+                            </td>
+                            <td>
+                                <small>@(p.DateOfBirth?.ToString("dd/MM/yyyy") ?? "--")</small>
+                            </td>
+                            <td>
+                                <small>@(p.Phone ?? "--")</small>
+                            </td>
+                            <td>
+                                <small>@(p.Email ?? "--")</small>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(p.Username))
+                                {
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">@p.Username</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Chưa liên kết</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (p.Status == PatientStatus.Active)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Tạm ngừng</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-info" title="Xem chi tiết">
+                                        👁️
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-warning" title="Chỉnh sửa">
+                                        ✏️
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger" title="Xóa bệnh nhân">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <p class="mb-1 fs-5">🔍 Không tìm thấy bệnh nhân nào</p>
+                            <small>Hãy thử thay đổi điều kiện tìm kiếm hoặc thêm bệnh nhân mới.</small>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+            <span class="text-muted small">
+                Trang <strong>@Model.CurrentPage</strong> / <strong>@Model.TotalPages</strong>
+            </span>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-CurrentPage="@(Model.CurrentPage - 1)"
+                           asp-route-SearchTerm="@Model.SearchTerm"
+                           asp-route-Status="@Model.Status"
+                           asp-route-SortBy="@Model.SortBy">
+                            &laquo; Trước
+                        </a>
+                    </li>
+
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-CurrentPage="@p"
+                               asp-route-SearchTerm="@Model.SearchTerm"
+                               asp-route-Status="@Model.Status"
+                               asp-route-SortBy="@Model.SortBy">
+                                @p
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-CurrentPage="@(Model.CurrentPage + 1)"
+                           asp-route-SearchTerm="@Model.SearchTerm"
+                           asp-route-Status="@Model.Status"
+                           asp-route-SortBy="@Model.SortBy">
+                            Sau &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

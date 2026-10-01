@@ -6,6 +6,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 
 builder.Services.AddScoped<ServiceExceptionFilter>();
 

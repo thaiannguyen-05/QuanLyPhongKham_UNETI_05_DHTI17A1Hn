@@ -1,0 +1,79 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Models.PatientDetailViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+@{
+    ViewData["Title"] = "Chi tiết bệnh nhân";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">Hồ sơ chi tiết bệnh nhân</h1>
+        <small class="text-muted">Mã bệnh nhân: #@Model.Patient.Id</small>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Patient.Id">
+            ✏️ Chỉnh sửa
+        </a>
+        <a class="btn btn-outline-secondary" asp-action="Index">
+            &larr; Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Thông tin cá nhân</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Họ và tên:</dt>
+                        <dd class="col-sm-8 fw-bold">@Model.Patient.FullName</dd>
+
+                        <dt class="col-sm-4 text-muted">Giới tính:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.Gender ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Ngày sinh:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Số điện thoại:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.Phone ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Email:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.Email ?? "Chưa cập nhật")</dd>
+
+                        <dt class="col-sm-4 text-muted">Địa chỉ:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.Address ?? "Chưa cập nhật")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Tài khoản & Khám bệnh</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Tài khoản:</dt>
+                        <dd class="col-sm-8">@(Model.Patient.Username ?? "Chưa liên kết")</dd>
+
+                        <dt class="col-sm-4 text-muted">Ngày đăng ký:</dt>
+                        <dd class="col-sm-8">@Model.Patient.RegisteredAt.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4 text-muted">Trạng thái:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Patient.Status == PatientStatus.Active)
+                            {
+                                <span class="badge bg-success">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Tạm ngừng</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Số phiếu khám:</dt>
+                        <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Patient.BookingCount phiếu</span></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

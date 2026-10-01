@@ -1,0 +1,97 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Models.PatientFormViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="FullName" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="FullName" class="form-control" placeholder="Ví dụ: Nguyễn Văn An" />
+        <span asp-validation-for="FullName" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+        <input asp-for="DateOfBirth" class="form-control" type="date" min="1900-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="Gender" class="form-label fw-semibold"></label>
+        <select asp-for="Gender" class="form-select">
+            <option value="">-- Chọn giới tính --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Phone" class="form-label fw-semibold"></label>
+        <input asp-for="Phone" class="form-control" placeholder="Ví dụ: 0912345678" />
+        <span asp-validation-for="Phone" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label fw-semibold"></label>
+        <input asp-for="Email" class="form-control" placeholder="Ví dụ: benhnhan@gmail.com" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-8">
+        <label asp-for="Address" class="form-label fw-semibold"></label>
+        <input asp-for="Address" class="form-control" placeholder="Ví dụ: 123 Trần Phú, Hà Nội" />
+        <span asp-validation-for="Address" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Status" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<PatientStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="AccountId" class="form-label fw-semibold"></label>
+        <select asp-for="AccountId" asp-items="Model.AvailableAccounts" class="form-select">
+            <option value="">-- Không liên kết --</option>
+        </select>
+        <span asp-validation-for="AccountId" class="text-danger small"></span>
+    </div>
+
+    @if (!Model.Id.HasValue)
+    {
+        <div class="col-12">
+            <div class="form-check mt-2">
+                <input asp-for="CreateAccount" class="form-check-input" id="createAccountCheck" />
+                <label asp-for="CreateAccount" class="form-check-label fw-semibold"></label>
+            </div>
+        </div>
+
+        <div id="newAccountFields" class="row g-3 mt-1">
+            <div class="col-md-6">
+                <label asp-for="NewUsername" class="form-label fw-semibold"></label>
+                <input asp-for="NewUsername" class="form-control" placeholder="Tên đăng nhập cho bệnh nhân" />
+                <span asp-validation-for="NewUsername" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="NewPassword" class="form-label fw-semibold"></label>
+                <input asp-for="NewPassword" class="form-control" placeholder="Mật khẩu từ 6 ký tự" />
+                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var check = document.getElementById('createAccountCheck');
+                var fields = document.getElementById('newAccountFields');
+                function toggle() {
+                    if (fields) fields.style.display = check && check.checked ? '' : 'none';
+                }
+                if (check) {
+                    check.addEventListener('change', toggle);
+                    toggle();
+                }
+            })();
+        </script>
+    }
+</div>
