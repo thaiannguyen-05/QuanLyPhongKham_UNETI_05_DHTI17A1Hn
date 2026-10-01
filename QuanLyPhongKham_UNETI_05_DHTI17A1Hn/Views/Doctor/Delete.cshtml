@@ -1,0 +1,69 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Models.DoctorDeleteViewModel
+@{
+    ViewData["Title"] = "Xác nhận xóa bác sĩ";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-danger fw-bold">Xóa bác sĩ</h1>
+        <small class="text-muted">Xác nhận thông tin trước khi xóa khỏi hệ thống</small>
+    </div>
+    <a class="btn btn-outline-secondary" asp-action="Index">
+        &larr; Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-danger border-2">
+    <div class="card-body p-4">
+        @if (!Model.CanDelete)
+        {
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <div>
+                    <h5 class="alert-heading fw-bold">⚠️ Không thể xóa bác sĩ này!</h5>
+                    <p class="mb-0">Bác sĩ <strong>@Model.Doctor.FullName</strong> hiện đang có <strong>@Model.Doctor.ScheduleCount lịch khám</strong> trong hệ thống. Để bảo toàn dữ liệu khám chữa bệnh, bạn không thể xóa hoàn toàn bác sĩ này. Vui lòng chuyển trạng thái sang <strong>Ngừng làm việc</strong>.</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Doctor.Id">
+                    Chuyển sang "Ngừng làm việc"
+                </a>
+                <a class="btn btn-secondary" asp-action="Index">Quay lại</a>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                <h5 class="alert-heading fw-bold">Bạn có chắc chắn muốn xóa bác sĩ này?</h5>
+                <p class="mb-0">Hành động này sẽ xóa vĩnh viễn dữ liệu của bác sĩ khỏi cơ sở dữ liệu và không thể hoàn tác.</p>
+            </div>
+
+            <dl class="row mb-4">
+                <dt class="col-sm-3 text-muted">Mã bác sĩ:</dt>
+                <dd class="col-sm-9 fw-bold">#@Model.Doctor.Id</dd>
+
+                <dt class="col-sm-3 text-muted">Họ và tên:</dt>
+                <dd class="col-sm-9 fw-bold">@Model.Doctor.FullName</dd>
+
+                <dt class="col-sm-3 text-muted">Chuyên khoa:</dt>
+                <dd class="col-sm-9">@Model.Doctor.SpecialtyName</dd>
+
+                <dt class="col-sm-3 text-muted">Số điện thoại:</dt>
+                <dd class="col-sm-9">@(Model.Doctor.Phone ?? "-")</dd>
+
+                <dt class="col-sm-3 text-muted">Email:</dt>
+                <dd class="col-sm-9">@(Model.Doctor.Email ?? "-")</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Doctor.Id" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger px-4">
+                        🗑️ Xác nhận xóa
+                    </button>
+                    <a class="btn btn-light border" asp-action="Index">Hủy bỏ</a>
+                </div>
+            </form>
+        }
+    </div>
+</div>

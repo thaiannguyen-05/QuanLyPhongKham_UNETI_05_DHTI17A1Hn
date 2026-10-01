@@ -5,6 +5,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Common.Guards;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Account.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 
 builder.Services.AddScoped<ServiceExceptionFilter>();
 
@@ -45,6 +47,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DbSeeder.SeedAdminAsync(dbContext);
+    await DbSeeder.SeedSampleDataAsync(dbContext);
 }
 
 // Configure the HTTP request pipeline.
