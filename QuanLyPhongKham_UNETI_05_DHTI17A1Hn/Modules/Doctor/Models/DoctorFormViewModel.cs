@@ -59,6 +59,11 @@ public sealed class DoctorFormViewModel : IValidatableObject
     [Display(Name = "Trạng thái")]
     public DoctorStatus Status { get; set; } = DoctorStatus.Working;
 
+    public int? AccountId { get; set; }
+
+    [Display(Name = "Tài khoản đăng nhập")]
+    public IEnumerable<SelectListItem> AvailableAccounts { get; set; } = Enumerable.Empty<SelectListItem>();
+
     public IEnumerable<SelectListItem> SpecialtyList { get; set; } = Enumerable.Empty<SelectListItem>();
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

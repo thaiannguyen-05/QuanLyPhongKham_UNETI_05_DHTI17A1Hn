@@ -29,6 +29,7 @@ public sealed class DoctorService : IDoctorService
         var query = _context.Doctors
             .AsNoTracking()
             .Include(d => d.Specialty)
+            .Include(d => d.Account)
             .AsQueryable();
 
         // 1. Tìm kiếm theo Từ khóa (Họ tên, SĐT, Trình độ)
@@ -97,6 +98,8 @@ public sealed class DoctorService : IDoctorService
                     YearsOfExperience = d.YearsOfExperience,
                     ConsultationFee = d.ConsultationFee,
                     Status = d.Status,
+                    AccountId = d.AccountId,
+                    Username = d.Account != null ? d.Account.Username : null,
                     ScheduleCount = d.Schedules.Count()
                 })
                 .ToListAsync(cancellationToken);
@@ -148,6 +151,8 @@ public sealed class DoctorService : IDoctorService
                     YearsOfExperience = d.YearsOfExperience,
                     ConsultationFee = d.ConsultationFee,
                     Status = d.Status,
+                    AccountId = d.AccountId,
+                    Username = d.Account != null ? d.Account.Username : null,
                     ScheduleCount = d.Schedules.Count()
                 })
                 .ToListAsync(cancellationToken);
@@ -177,6 +182,8 @@ public sealed class DoctorService : IDoctorService
                 YearsOfExperience = d.YearsOfExperience,
                 ConsultationFee = d.ConsultationFee,
                 Status = d.Status,
+                AccountId = d.AccountId,
+                Username = d.Account != null ? d.Account.Username : null,
                 ScheduleCount = d.Schedules.Count()
             })
             .SingleOrDefaultAsync(cancellationToken);
@@ -195,6 +202,11 @@ public sealed class DoctorService : IDoctorService
             throw new ArgumentException(SpecialtyNotFoundMessage, nameof(dto.SpecialtyId));
         }
 
+        if (dto.AccountId.HasValue)
+        {
+            await ValidateLinkableAccountAsync(dto.AccountId.Value, null, cancellationToken);
+        }
+
         var doctor = new DoctorEntity
         {
             FullName = dto.FullName.Trim(),
@@ -206,7 +218,8 @@ public sealed class DoctorService : IDoctorService
             Qualification = string.IsNullOrWhiteSpace(dto.Qualification) ? null : dto.Qualification.Trim(),
             YearsOfExperience = dto.YearsOfExperience,
             ConsultationFee = dto.ConsultationFee,
-            Status = dto.Status
+            Status = dto.Status,
+            AccountId = dto.AccountId
         };
 
         _context.Doctors.Add(doctor);
@@ -239,6 +252,13 @@ public sealed class DoctorService : IDoctorService
         doctor.YearsOfExperience = dto.YearsOfExperience;
         doctor.ConsultationFee = dto.ConsultationFee;
         doctor.Status = dto.Status;
+
+        if (dto.AccountId.HasValue)
+        {
+            await ValidateLinkableAccountAsync(dto.AccountId.Value, id, cancellationToken);
+        }
+
+        doctor.AccountId = dto.AccountId;
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -274,6 +294,44 @@ public sealed class DoctorService : IDoctorService
                 Text = s.Name
             })
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<SelectListItem>> GetAvailableAccountsAsync(
+        int? excludeDoctorId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var linkedIds = _context.Doctors.AsNoTracking()
+            .Where(d => d.AccountId.HasValue)
+            .Where(d => !excludeDoctorId.HasValue || d.Id != excludeDoctorId.Value)
+            .Select(d => d.AccountId!.Value);
+
+        return await _context.Accounts.AsNoTracking()
+            .Where(a => a.Role == Role.Doctor)
+            .Where(a => a.Status == AccountStatus.Active)
+            .Where(a => !linkedIds.Contains(a.Id))
+            .OrderBy(a => a.Username)
+            .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = $"{a.Username} — {a.FullName}" })
+            .ToListAsync(cancellationToken);
+    }
+
+    private async Task ValidateLinkableAccountAsync(int accountId, int? excludeDoctorId, CancellationToken cancellationToken)
+    {
+        var account = await _context.Accounts.AsNoTracking()
+            .SingleOrDefaultAsync(a => a.Id == accountId, cancellationToken);
+        if (account is null)
+        {
+            throw new ArgumentException("Tài khoản liên kết đã chọn không tồn tại.", "AccountId");
+        }
+        if (account.Role != Role.Doctor)
+        {
+            throw new ArgumentException("Chỉ tài khoản vai trò Bác sĩ mới được liên kết hồ sơ.", "AccountId");
+        }
+        var linked = await _context.Doctors.AsNoTracking()
+            .AnyAsync(d => d.AccountId == accountId && (!excludeDoctorId.HasValue || d.Id != excludeDoctorId.Value), cancellationToken);
+        if (linked)
+        {
+            throw new ArgumentException("Tài khoản này đã liên kết với một bác sĩ khác.", "AccountId");
+        }
     }
 
     private static (string FirstName, string MiddleAndLastName) ExtractVietnameseNameParts(string? fullName)

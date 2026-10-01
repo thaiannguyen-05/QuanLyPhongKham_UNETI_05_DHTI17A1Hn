@@ -1,0 +1,15 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleIndexViewModel
+@{ ViewData["Title"] = "Quản lý Lịch khám"; ViewData["ShowAdminActions"] = true; }
+<h1 class="h3 text-primary fw-bold mb-1">Quản lý Lịch khám</h1>
+<p class="text-muted small">Duyệt đề xuất của bác sĩ, tạm ngừng/mở lại lịch đã duyệt</p>
+@if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+<div class="card shadow-sm border-0 mb-3"><div class="card-body">
+<form method="get" asp-action="Index"><div class="row g-2">
+<div class="col-md-3"><select name="DoctorId" asp-items="Model.DoctorList" class="form-select"><option value="">-- Tất cả bác sĩ --</option></select></div>
+<div class="col-md-3"><select name="SpecialtyId" asp-items="Model.SpecialtyList" class="form-select"><option value="">-- Tất cả chuyên khoa --</option></select></div>
+<div class="col-md-2"><input type="date" name="Date" value="@(Model.Date?.ToString("yyyy-MM-dd"))" class="form-control" /></div>
+<div class="col-md-2"><select name="Status" class="form-select" asp-items="Html.GetEnumSelectList<ScheduleStatus>()"><option value="">-- Tất cả trạng thái --</option></select></div>
+<div class="col-md-2 d-flex gap-2"><button class="btn btn-primary">Lọc</button><a asp-action="Index" class="btn btn-outline-secondary">Reset</a></div>
+</div></form>
+</div></div>
+<partial name="_ScheduleTable" model="Model" />

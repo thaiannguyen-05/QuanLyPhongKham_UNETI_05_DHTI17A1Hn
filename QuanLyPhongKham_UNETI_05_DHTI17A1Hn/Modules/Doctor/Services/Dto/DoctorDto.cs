@@ -16,5 +16,7 @@ public sealed class DoctorDto
     public int YearsOfExperience { get; set; }
     public decimal ConsultationFee { get; set; }
     public DoctorStatus Status { get; set; }
+    public int? AccountId { get; set; }
+    public string? Username { get; set; }
     public int ScheduleCount { get; set; }
 }

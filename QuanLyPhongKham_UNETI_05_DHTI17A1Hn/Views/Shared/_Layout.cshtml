@@ -41,6 +41,18 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="Index">Quản lý bệnh nhân</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Index">Quản lý lịch khám</a>
+                            </li>
+                        }
+                        @if (currentRole == Role.Doctor)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="My">Lịch của tôi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Search">Tra cứu lịch</a>
+                            </li>
                         }
                         @if (currentRole == Role.Patient)
                         {
@@ -48,6 +60,9 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="Me">Thông tin cá nhân</a>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Search">Tra cứu lịch</a>
+                        </li>
                         <li class="nav-item">
                             @if (!string.IsNullOrWhiteSpace(currentName))
                             {

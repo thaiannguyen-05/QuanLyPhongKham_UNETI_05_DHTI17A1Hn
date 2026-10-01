@@ -7,7 +7,9 @@ public enum Role
     [Display(Name = "Quản trị viên")]
     Admin = 0,
     [Display(Name = "Bệnh nhân")]
-    Patient = 1
+    Patient = 1,
+    [Display(Name = "Bác sĩ")]
+    Doctor = 2
 }
 
 public enum AccountStatus
@@ -51,7 +53,11 @@ public enum ScheduleStatus
     [Display(Name = "Đã đủ")]
     Full = 1,
     [Display(Name = "Tạm ngừng")]
-    Closed = 2
+    Closed = 2,
+    [Display(Name = "Chờ duyệt")]
+    Pending = 3,
+    [Display(Name = "Bị từ chối")]
+    Rejected = 4
 }
 
 public enum BookingStatus

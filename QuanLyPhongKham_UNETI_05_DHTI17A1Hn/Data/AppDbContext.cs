@@ -36,6 +36,12 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data
             modelBuilder.Entity<Doctor>()
                 .Property(b => b.ConsultationFee)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Doctor>()
+                .HasOne(b => b.Account)
+                .WithOne(a => a.Doctor)
+                .HasForeignKey<Doctor>(b => b.AccountId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

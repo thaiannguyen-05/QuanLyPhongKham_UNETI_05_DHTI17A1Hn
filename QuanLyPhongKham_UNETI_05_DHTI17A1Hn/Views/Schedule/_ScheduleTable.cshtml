@@ -1,0 +1,52 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleIndexViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+<div class="card shadow-sm border-0"><div class="table-responsive">
+<table class="table table-hover align-middle mb-0">
+<thead class="table-light"><tr>
+<th>Mã</th><th>Bác sĩ</th><th>Ngày</th><th>Giờ</th><th class="text-center">SL</th><th class="text-center">Trạng thái</th><th class="text-center">Thao tác</th>
+</tr></thead>
+<tbody>
+@if (Model.Schedules.Any()) {
+foreach (var s in Model.Schedules) {
+<tr>
+<td class="fw-bold text-muted">#@s.Id</td>
+<td><div class="fw-bold">@s.DoctorName</div><small class="text-muted">@s.SpecialtyName</small></td>
+<td>@s.Date.ToString("dd/MM/yyyy")</td>
+<td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
+<td class="text-center">@s.BookedCount/@s.Capacity</td>
+<td class="text-center">
+@switch (s.Status) {
+case ScheduleStatus.Open: <span class="badge bg-success-subtle text-success border">Còn nhận</span>; break;
+case ScheduleStatus.Full: <span class="badge bg-danger-subtle text-danger border">Đã đủ</span>; break;
+case ScheduleStatus.Closed: <span class="badge bg-secondary-subtle text-secondary border">Tạm ngừng</span>; break;
+case ScheduleStatus.Pending: <span class="badge bg-warning-subtle text-warning border">Chờ duyệt</span>; break;
+case ScheduleStatus.Rejected: <span class="badge bg-dark-subtle text-dark border">Bị từ chối</span>; break;
+}
+</td>
+<td class="text-center">
+<a asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-outline-info">Xem</a>
+@if (ViewData["ShowDoctorActions"] as bool? == true && (s.Status == ScheduleStatus.Pending || s.Status == ScheduleStatus.Rejected)) {
+<a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+<a asp-action="Delete" asp-route-id="@s.Id" class="btn btn-sm btn-outline-danger">Xóa</a>
+}
+@if (ViewData["ShowAdminActions"] as bool? == true) {
+if (s.Status == ScheduleStatus.Pending) {
+<form asp-action="Approve" asp-route-id="@s.Id" method="post" class="d-inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-success">Duyệt</button></form>
+<form asp-action="Reject" asp-route-id="@s.Id" method="post" class="d-inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-dark">Từ chối</button></form>
+}
+if (s.Status == ScheduleStatus.Open) {
+<form asp-action="Close" asp-route-id="@s.Id" method="post" class="d-inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-secondary">Tạm ngừng</button></form>
+}
+if (s.Status == ScheduleStatus.Closed) {
+<form asp-action="Reopen" asp-route-id="@s.Id" method="post" class="d-inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-primary">Mở lại</button></form>
+}
+}
+</td>
+</tr>
+}
+} else {
+<tr><td colspan="7" class="text-center py-5 text-muted">Không có lịch nào. Hãy thử đổi điều kiện lọc.</td></tr>
+}
+</tbody>
+</table>
+</div></div>

@@ -68,4 +68,12 @@
         <input asp-for="ConsultationFee" class="form-control" type="number" step="any" min="1" placeholder="Ví dụ: 300000" />
         <span asp-validation-for="ConsultationFee" class="text-danger small"></span>
     </div>
+
+    <div class="col-md-6">
+        <label asp-for="AccountId" class="form-label fw-semibold"></label>
+        <select asp-for="AccountId" asp-items="Model.AvailableAccounts" class="form-select">
+            <option value="">-- Không liên kết --</option>
+        </select>
+        <span asp-validation-for="AccountId" class="text-danger small"></span>
+    </div>
 </div>

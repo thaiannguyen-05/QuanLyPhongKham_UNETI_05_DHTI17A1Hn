@@ -59,7 +59,8 @@ public sealed class DoctorController : Controller
     {
         var model = new DoctorFormViewModel
         {
-            SpecialtyList = await _doctorService.GetSpecialtyDropdownAsync(cancellationToken)
+            SpecialtyList = await _doctorService.GetSpecialtyDropdownAsync(cancellationToken),
+            AvailableAccounts = await _doctorService.GetAvailableAccountsAsync(null, cancellationToken)
         };
         return View(model);
     }
@@ -73,6 +74,7 @@ public sealed class DoctorController : Controller
         if (!ModelState.IsValid)
         {
             model.SpecialtyList = await _doctorService.GetSpecialtyDropdownAsync(cancellationToken);
+            model.AvailableAccounts = await _doctorService.GetAvailableAccountsAsync(null, cancellationToken);
             return View(model);
         }
 
@@ -89,6 +91,7 @@ public sealed class DoctorController : Controller
         var doctor = await _doctorService.GetByIdAsync(id, cancellationToken);
         var model = doctor.ToFormViewModel();
         model.SpecialtyList = await _doctorService.GetSpecialtyDropdownAsync(cancellationToken);
+        model.AvailableAccounts = await _doctorService.GetAvailableAccountsAsync(doctor.Id, cancellationToken);
         return View(model);
     }
 
@@ -107,6 +110,7 @@ public sealed class DoctorController : Controller
         if (!ModelState.IsValid)
         {
             model.SpecialtyList = await _doctorService.GetSpecialtyDropdownAsync(cancellationToken);
+            model.AvailableAccounts = await _doctorService.GetAvailableAccountsAsync(id, cancellationToken);
             return View(model);
         }
 

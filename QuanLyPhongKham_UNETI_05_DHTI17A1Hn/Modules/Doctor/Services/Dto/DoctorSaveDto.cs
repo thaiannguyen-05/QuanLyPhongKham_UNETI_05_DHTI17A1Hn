@@ -14,4 +14,5 @@ public sealed class DoctorSaveDto
     public int YearsOfExperience { get; set; }
     public decimal ConsultationFee { get; set; }
     public DoctorStatus Status { get; set; } = DoctorStatus.Working;
+    public int? AccountId { get; set; }
 }

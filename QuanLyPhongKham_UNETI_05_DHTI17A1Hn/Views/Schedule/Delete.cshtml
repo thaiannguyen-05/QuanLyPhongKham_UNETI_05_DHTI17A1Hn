@@ -1,0 +1,10 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleDeleteViewModel
+@{ ViewData["Title"] = "Xóa đề xuất lịch"; }
+<h1 class="h3 text-danger fw-bold">Xóa lịch #@Model.Schedule.Id?</h1>
+<p>Chỉ xóa được khi Chờ duyệt/Bị từ chối và chưa có phiếu hợp lệ. Hành động không thể hoàn tác.</p>
+<form asp-action="Delete" method="post">
+@Html.AntiForgeryToken()
+<input type="hidden" name="Schedule.Id" value="@Model.Schedule.Id" />
+<button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+<a asp-action="My" class="btn btn-light">Hủy</a>
+</form>
