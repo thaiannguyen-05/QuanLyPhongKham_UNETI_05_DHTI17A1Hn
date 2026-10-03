@@ -1,0 +1,62 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Models.BookingRegisterViewModel
+@{
+    ViewData["Title"] = "Xác nhận đăng ký khám";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">Xác nhận đăng ký khám</h1>
+        <small class="text-muted">Kiểm tra thông tin lịch trước khi gửi phiếu</small>
+    </div>
+    <a class="btn btn-outline-secondary" asp-controller="Schedule" asp-action="Search">
+        &larr; Quay lại tra cứu
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <dl class="row mb-4">
+            <dt class="col-sm-3 text-muted">Bác sĩ:</dt>
+            <dd class="col-sm-9 fw-bold">@Model.DoctorName</dd>
+
+            <dt class="col-sm-3 text-muted">Chuyên khoa:</dt>
+            <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.SpecialtyName) ? "-" : Model.SpecialtyName)</dd>
+
+            <dt class="col-sm-3 text-muted">Ngày khám:</dt>
+            <dd class="col-sm-9">@Model.Date.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3 text-muted">Giờ khám:</dt>
+            <dd class="col-sm-9">@Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</dd>
+
+            <dt class="col-sm-3 text-muted">Chỗ còn lại:</dt>
+            <dd class="col-sm-9">@Model.RemainingSlots chỗ</dd>
+        </dl>
+
+        <div class="alert alert-info">
+            Phiếu của bạn sẽ ở trạng thái <strong>Chờ xác nhận</strong> và chỉ giữ chỗ khi quản trị viên <strong>chấp nhận</strong>.
+        </div>
+
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ScheduleId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Reason" class="form-label fw-semibold"></label>
+                <textarea asp-for="Reason" class="form-control" rows="3" placeholder="Mô tả triệu chứng hoặc lý do khám (không bắt buộc)"></textarea>
+                <span asp-validation-for="Reason" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success px-4">
+                    ✅ Xác nhận đăng ký
+                </button>
+                <a class="btn btn-light border" asp-controller="Schedule" asp-action="Search">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

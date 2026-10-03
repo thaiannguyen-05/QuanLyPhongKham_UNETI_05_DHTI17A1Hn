@@ -7,6 +7,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Auth.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Specialty.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Doctor.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,7 @@ builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddScoped<ServiceExceptionFilter>();
 

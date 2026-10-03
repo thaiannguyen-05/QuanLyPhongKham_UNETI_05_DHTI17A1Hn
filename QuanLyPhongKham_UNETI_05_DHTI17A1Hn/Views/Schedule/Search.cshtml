@@ -1,5 +1,13 @@
 @model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleIndexViewModel
-@{ ViewData["Title"] = "Tra cứu lịch khám"; }
+@{ ViewData["Title"] = "Tra cứu lịch khám"; ViewData["ShowRegisterButton"] = true; }
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">✅ @success<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">⚠️ @error<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+}
 <h1 class="h3 text-primary fw-bold mb-1">Tra cứu lịch khám</h1>
 <p class="text-muted small">Chỉ hiển thị lịch Còn nhận đăng ký, chưa diễn ra và còn chỗ</p>
 <div class="card shadow-sm border-0 mb-3"><div class="card-body">

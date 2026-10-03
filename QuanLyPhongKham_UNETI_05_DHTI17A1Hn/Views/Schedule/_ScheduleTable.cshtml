@@ -29,6 +29,9 @@ case ScheduleStatus.Rejected: <span class="badge bg-dark-subtle text-dark border
 <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
 <a asp-action="Delete" asp-route-id="@s.Id" class="btn btn-sm btn-outline-danger">Xóa</a>
 }
+@if (ViewData["ShowRegisterButton"] as bool? == true && s.Status == ScheduleStatus.Open) {
+<a asp-controller="Booking" asp-action="Register" asp-route-scheduleId="@s.Id" class="btn btn-sm btn-success">Đăng ký</a>
+}
 @if (ViewData["ShowAdminActions"] as bool? == true) {
 if (s.Status == ScheduleStatus.Pending) {
 <form asp-action="Approve" asp-route-id="@s.Id" method="post" class="d-inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-success">Duyệt</button></form>
