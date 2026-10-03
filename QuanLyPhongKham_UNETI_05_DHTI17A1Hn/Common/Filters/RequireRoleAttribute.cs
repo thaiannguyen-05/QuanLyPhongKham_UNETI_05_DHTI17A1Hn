@@ -84,6 +84,14 @@ public sealed class RequireRoleFilter : IAsyncAuthorizationFilter
                 .Select(patient => (int?)patient.Id)
                 .SingleOrDefaultAsync();
         }
+
+        if (account.Role == Role.Doctor)
+        {
+            httpContext.Items[AuthItems.DoctorId] = await _dbContext.Doctors
+                .Where(doctor => doctor.AccountId == account.Id)
+                .Select(doctor => (int?)doctor.Id)
+                .SingleOrDefaultAsync();
+        }
     }
 
     private static void RedirectToLogin(AuthorizationFilterContext context)
@@ -98,4 +106,5 @@ public static class AuthItems
     public const string Role = "Role";
     public const string FullName = "FullName";
     public const string PatientId = "PatientId";
+    public const string DoctorId = "DoctorId";
 }

@@ -1,0 +1,19 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleFormViewModel
+@{ ViewData["Title"] = "Sửa đề xuất lịch"; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 text-primary fw-bold">Sửa đề xuất (về Chờ duyệt)</h1>
+    <a class="btn btn-outline-secondary" asp-action="My">Lịch của tôi</a>
+</div>
+<div class="card shadow-sm border-0"><div class="card-body p-4">
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <partial name="_ScheduleForm" model="Model" />
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-warning px-4">Lưu (về Chờ duyệt)</button>
+        <a class="btn btn-light" asp-action="My">Hủy</a>
+    </div>
+</form>
+</div></div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

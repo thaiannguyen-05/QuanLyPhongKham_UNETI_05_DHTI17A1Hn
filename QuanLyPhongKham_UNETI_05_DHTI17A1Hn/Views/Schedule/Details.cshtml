@@ -1,0 +1,13 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleDetailViewModel
+@{ ViewData["Title"] = "Chi tiết lịch khám"; }
+<h1 class="h3 text-primary fw-bold">Lịch #@Model.Schedule.Id</h1>
+<div class="card shadow-sm border-0"><div class="card-body">
+<dl class="row mb-0">
+<dt class="col-sm-3">Bác sĩ</dt><dd class="col-sm-9">@Model.Schedule.DoctorName (@Model.Schedule.SpecialtyName)</dd>
+<dt class="col-sm-3">Ngày</dt><dd class="col-sm-9">@Model.Schedule.Date.ToString("dd/MM/yyyy")</dd>
+<dt class="col-sm-3">Giờ</dt><dd class="col-sm-9">@Model.Schedule.StartTime.ToString(@"hh\:mm") - @Model.Schedule.EndTime.ToString(@"hh\:mm")</dd>
+<dt class="col-sm-3">Số lượng</dt><dd class="col-sm-9">@Model.Schedule.BookedCount/@Model.Schedule.Capacity (còn @(Model.Schedule.Capacity - Model.Schedule.BookedCount))</dd>
+<dt class="col-sm-3">Trạng thái</dt><dd class="col-sm-9">@Model.Schedule.Status</dd>
+</dl>
+</div></div>
+<a asp-action="Search" class="btn btn-outline-secondary mt-3">Quay lại tra cứu</a>

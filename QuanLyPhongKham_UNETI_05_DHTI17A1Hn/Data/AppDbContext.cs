@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema;
 namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data
 {
@@ -33,9 +34,25 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
+            modelBuilder.Entity<Booking>()
+                .HasIndex(b => new { b.PatientId, b.ScheduleId })
+                .IsUnique()
+                .HasFilter($"[Status] <> {(int)BookingStatus.Cancelled}");
+
             modelBuilder.Entity<Doctor>()
                 .Property(b => b.ConsultationFee)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Booking>()
+                .HasIndex(b => new { b.PatientId, b.ScheduleId })
+                .IsUnique()
+                .HasFilter($"[Status] <> {(int)BookingStatus.Cancelled}");
+
+            modelBuilder.Entity<Doctor>()
+                .HasOne(b => b.Account)
+                .WithOne(a => a.Doctor)
+                .HasForeignKey<Doctor>(b => b.AccountId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

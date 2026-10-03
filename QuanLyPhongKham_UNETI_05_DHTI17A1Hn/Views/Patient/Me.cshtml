@@ -1,0 +1,83 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Models.PatientOwnViewModel
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">Thông tin cá nhân</h1>
+        <small class="text-muted">Xem và cập nhật số điện thoại, email, địa chỉ của bạn</small>
+    </div>
+</div>
+
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @success
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="alert alert-info">
+            Họ tên: <strong>@Model.FullName</strong>
+            @if (!string.IsNullOrEmpty(Model.Username))
+            {
+                <span class="ms-3">Tài khoản: <strong>@Model.Username</strong></span>
+            }
+        </div>
+
+        <form asp-action="Me" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+                    <input asp-for="DateOfBirth" class="form-control" type="date" min="1900-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Gender" class="form-label fw-semibold"></label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="">-- Chọn giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Phone" class="form-label fw-semibold"></label>
+                    <input asp-for="Phone" class="form-control" placeholder="Ví dụ: 0912345678" />
+                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label fw-semibold"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Ví dụ: benhnhan@gmail.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Address" class="form-label fw-semibold"></label>
+                    <input asp-for="Address" class="form-control" placeholder="Địa chỉ liên hệ" />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">
+                    💾 Lưu thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

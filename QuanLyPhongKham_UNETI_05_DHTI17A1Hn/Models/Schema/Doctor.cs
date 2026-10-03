@@ -54,5 +54,11 @@ public class Doctor
     [Display(Name = "Trạng thái")]
     public DoctorStatus Status { get; set; } = DoctorStatus.Working;
 
+    [Display(Name = "Mã tài khoản")]
+    public int? AccountId { get; set; }
+
+    [ForeignKey(nameof(AccountId))]
+    public Account? Account { get; set; }
+
     public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

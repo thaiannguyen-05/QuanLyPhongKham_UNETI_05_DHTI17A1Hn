@@ -26,6 +26,10 @@ public interface IDoctorService
         int id,
         CancellationToken cancellationToken = default);
 
+    Task<IEnumerable<SelectListItem>> GetAvailableAccountsAsync(
+        int? excludeDoctorId = null,
+        CancellationToken cancellationToken = default);
+
     Task<IEnumerable<SelectListItem>> GetSpecialtyDropdownAsync(
         CancellationToken cancellationToken = default);
 }

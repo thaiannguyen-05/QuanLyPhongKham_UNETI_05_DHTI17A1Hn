@@ -18,7 +18,8 @@ public static class DoctorMapping
             Qualification = model.Qualification?.Trim(),
             YearsOfExperience = model.YearsOfExperience,
             ConsultationFee = model.ConsultationFee,
-            Status = model.Status
+            Status = model.Status,
+            AccountId = model.AccountId
         };
     }
 
@@ -36,7 +37,8 @@ public static class DoctorMapping
             Qualification = dto.Qualification,
             YearsOfExperience = dto.YearsOfExperience,
             ConsultationFee = dto.ConsultationFee,
-            Status = dto.Status
+            Status = dto.Status,
+            AccountId = dto.AccountId
         };
     }
 

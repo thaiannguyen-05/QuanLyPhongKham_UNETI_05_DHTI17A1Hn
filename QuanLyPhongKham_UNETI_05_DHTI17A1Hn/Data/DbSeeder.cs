@@ -239,5 +239,54 @@ public static class DbSeeder
             context.Doctors.AddRange(doctors);
             await context.SaveChangesAsync();
         }
+
+        await SeedDoctorAccountsAsync(context);
+    }
+
+    public static async Task SeedDoctorAccountsAsync(AppDbContext context)
+    {
+        var doctors = await context.Doctors
+            .Where(d => d.AccountId == null)
+            .ToListAsync();
+
+        if (doctors.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var doctor in doctors)
+        {
+            var baseName = (doctor.Email?.Split('@')[0] ?? $"bs{doctor.Id}")
+                .Trim().ToLowerInvariant().Replace(" ", string.Empty).Replace(".", string.Empty);
+            if (string.IsNullOrWhiteSpace(baseName))
+            {
+                baseName = $"bs{doctor.Id}";
+            }
+
+            var username = baseName;
+            var suffix = 1;
+            while (await context.Accounts.AnyAsync(a => a.Username == username))
+            {
+                suffix++;
+                username = $"{baseName}{suffix}";
+            }
+
+            var account = new Account
+            {
+                Username = username,
+                PasswordHash = PasswordHasher.Hash("Doctor@123"),
+                FullName = doctor.FullName,
+                Email = doctor.Email,
+                Role = Role.Doctor,
+                Status = AccountStatus.Active
+            };
+
+            context.Accounts.Add(account);
+            await context.SaveChangesAsync();
+
+            doctor.AccountId = account.Id;
+        }
+
+        await context.SaveChangesAsync();
     }
 }

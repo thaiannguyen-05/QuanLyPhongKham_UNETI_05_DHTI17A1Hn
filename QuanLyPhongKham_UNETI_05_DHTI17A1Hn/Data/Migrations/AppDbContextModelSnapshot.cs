@@ -88,9 +88,11 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
-
                     b.HasIndex("ScheduleId");
+
+                    b.HasIndex("PatientId", "ScheduleId")
+                        .IsUnique()
+                        .HasFilter("[Status] <> 3");
 
                     b.ToTable("Bookings");
                 });
@@ -102,6 +104,9 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("ConsultationFee")
                         .HasPrecision(18, 2)
@@ -140,6 +145,10 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique()
+                        .HasFilter("[AccountId] IS NOT NULL");
 
                     b.HasIndex("SpecialtyId");
 
@@ -279,11 +288,18 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data.Migrations
 
             modelBuilder.Entity("QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Doctor", b =>
                 {
+                    b.HasOne("QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Account", "Account")
+                        .WithOne("Doctor")
+                        .HasForeignKey("QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Doctor", "AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Specialty", "Specialty")
                         .WithMany("Doctors")
                         .HasForeignKey("SpecialtyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Account");
 
                     b.Navigation("Specialty");
                 });
@@ -310,6 +326,8 @@ namespace QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Data.Migrations
 
             modelBuilder.Entity("QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Models.Schema.Account", b =>
                 {
+                    b.Navigation("Doctor");
+
                     b.Navigation("Patient");
                 });
 

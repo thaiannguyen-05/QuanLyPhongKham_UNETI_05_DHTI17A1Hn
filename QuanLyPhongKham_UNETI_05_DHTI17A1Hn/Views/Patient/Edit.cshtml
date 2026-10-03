@@ -1,0 +1,37 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Patient.Models.PatientFormViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa bệnh nhân";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">Chỉnh sửa thông tin bệnh nhân</h1>
+        <small class="text-muted">Cập nhật hồ sơ: @Model.FullName</small>
+    </div>
+    <a class="btn btn-outline-secondary" asp-action="Index">
+        &larr; Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <partial name="_PatientForm" model="Model" />
+
+            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">
+                    💾 Cập nhật thay đổi
+                </button>
+                <a class="btn btn-light" asp-action="Index">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

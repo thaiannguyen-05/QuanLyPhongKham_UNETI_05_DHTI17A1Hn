@@ -14,10 +14,14 @@ _Avoid_: Admin viết tắt trong docs, Người dùng chung chung
 Người đăng ký và sử dụng dịch vụ khám bệnh.
 _Avoid_: Khách hàng, Client, User chung chung
 
+**Bác sĩ** (vai trò đăng nhập):
+Tài khoản đăng nhập của một Bác sĩ để đề xuất lịch rảnh trong tuần; lịch phải được Quản trị viên duyệt mới thành Lịch khám cho Bệnh nhân đăng ký.
+_Avoid_: gộp với hồ sơ hành nghề ở mục Nghiệp vụ cốt lõi
+
 ### Tài khoản đăng nhập
 
 **Tài khoản**:
-Thông tin đăng nhập hệ thống của một Quản trị viên hoặc một Bệnh nhân.
+Thông tin đăng nhập hệ thống của một Quản trị viên, một Bác sĩ hoặc một Bệnh nhân.
 _Avoid_: User chung chung, Client
 
 ### Nghiệp vụ cốt lõi
@@ -31,7 +35,7 @@ Người hành nghề khám chữa bệnh, thuộc một chuyên khoa.
 _Avoid_: Physician, Thầy thuốc
 
 **Lịch khám**:
-Khung thời gian khám do quản trị viên thiết lập để bệnh nhân đăng ký.
+Khung thời gian khám do Bác sĩ đề xuất và được Quản trị viên duyệt để bệnh nhân đăng ký.
 _Avoid_: Ca khám, Slot (trong docs, chỉ dùng trong code nếu cần)
 
 **Phiếu đăng ký khám**:

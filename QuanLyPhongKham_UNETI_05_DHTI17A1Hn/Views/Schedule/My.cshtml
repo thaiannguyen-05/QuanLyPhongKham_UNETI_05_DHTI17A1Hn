@@ -1,0 +1,8 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleIndexViewModel
+@{ ViewData["Title"] = "Lịch của tôi"; ViewData["ShowDoctorActions"] = true; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div><h1 class="h3 text-primary fw-bold mb-0">Lịch của tôi</h1><small class="text-muted">Chỉ sửa/xóa khi Chờ duyệt hoặc Bị từ chối</small></div>
+<a asp-action="Create" class="btn btn-primary">+ Đề xuất lịch</a>
+</div>
+@if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+<partial name="_ScheduleTable" model="Model" />

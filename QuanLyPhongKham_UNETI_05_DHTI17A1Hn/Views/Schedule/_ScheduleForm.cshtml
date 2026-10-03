@@ -1,0 +1,23 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Models.ScheduleFormViewModel
+<div class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="Date" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="Date" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="Date" class="text-danger small"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="StartTime" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="StartTime" class="form-control" type="time" />
+        <span asp-validation-for="StartTime" class="text-danger small"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="EndTime" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="EndTime" class="form-control" type="time" />
+        <span asp-validation-for="EndTime" class="text-danger small"></span>
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Capacity" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+        <input asp-for="Capacity" class="form-control" type="number" min="1" max="1000" />
+        <span asp-validation-for="Capacity" class="text-danger small"></span>
+    </div>
+</div>

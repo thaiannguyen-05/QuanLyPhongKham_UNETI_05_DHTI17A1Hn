@@ -37,4 +37,6 @@ public class Account
     public AccountStatus Status { get; set; } = AccountStatus.Active;
 
     public Patient? Patient { get; set; }
+
+    public Doctor? Doctor { get; set; }
 }
