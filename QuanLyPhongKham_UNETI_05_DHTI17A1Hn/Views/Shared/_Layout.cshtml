@@ -44,6 +44,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Index">Quản lý lịch khám</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Index">Quản lý phiếu khám</a>
+                            </li>
                         }
                         @if (currentRole == Role.Doctor)
                         {
@@ -58,6 +61,9 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="Me">Thông tin cá nhân</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="My">Phiếu khám của tôi</a>
                             </li>
                         }
                         <li class="nav-item">

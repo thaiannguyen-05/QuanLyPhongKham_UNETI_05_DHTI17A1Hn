@@ -130,4 +130,101 @@ public sealed class BookingService : IBookingService
 
         return booking.Id;
     }
+
+    public async Task<(IReadOnlyList<BookingDto> Items, int TotalCount)> GetMyAsync(
+        int patientId,
+        BookingFilterDto filter,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var query = BaseQuery().Where(b => b.PatientId == patientId);
+        query = ApplyFilter(query, filter, skipSearch: true);
+        query = query.OrderByDescending(b => b.CreatedAt).ThenByDescending(b => b.Id);
+
+        return await ToPagedAsync(query, filter, cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<BookingDto> Items, int TotalCount)> GetPagedAsync(
+        BookingFilterDto filter,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var query = ApplyFilter(BaseQuery(), filter);
+        query = query.OrderByDescending(b => b.CreatedAt).ThenByDescending(b => b.Id);
+
+        return await ToPagedAsync(query, filter, cancellationToken);
+    }
+
+    private IQueryable<BookingEntity> BaseQuery()
+    {
+        return _context.Bookings
+            .AsNoTracking()
+            .Include(b => b.Patient)
+            .Include(b => b.Schedule).ThenInclude(s => s!.Doctor);
+    }
+
+    private static IQueryable<BookingEntity> ApplyFilter(
+        IQueryable<BookingEntity> query,
+        BookingFilterDto filter,
+        bool skipSearch = false)
+    {
+        if (!skipSearch && !string.IsNullOrWhiteSpace(filter.SearchTerm))
+        {
+            var term = filter.SearchTerm.Trim();
+            query = query.Where(b =>
+                b.Patient!.FullName.Contains(term) ||
+                (b.Patient.Phone != null && b.Patient.Phone.Contains(term)));
+        }
+
+        if (filter.Status.HasValue)
+        {
+            query = query.Where(b => b.Status == filter.Status.Value);
+        }
+
+        if (filter.DoctorId.HasValue && filter.DoctorId.Value > 0)
+        {
+            query = query.Where(b => b.Schedule != null && b.Schedule.DoctorId == filter.DoctorId.Value);
+        }
+
+        return query;
+    }
+
+    private static async Task<(IReadOnlyList<BookingDto> Items, int TotalCount)> ToPagedAsync(
+        IQueryable<BookingEntity> query,
+        BookingFilterDto filter,
+        CancellationToken cancellationToken)
+    {
+        var total = await query.CountAsync(cancellationToken);
+        var page = filter.PageNumber < 1 ? 1 : filter.PageNumber;
+        var size = filter.PageSize < 1 ? 10 : filter.PageSize;
+
+        var items = await query
+            .Skip((page - 1) * size)
+            .Take(size)
+            .Select(b => new BookingDto
+            {
+                Id = b.Id,
+                PatientId = b.PatientId,
+                PatientName = b.Patient != null ? b.Patient.FullName : string.Empty,
+                PatientPhone = b.Patient != null ? b.Patient.Phone : null,
+                ScheduleId = b.ScheduleId,
+                DoctorId = b.Schedule != null ? b.Schedule.DoctorId : 0,
+                DoctorName = b.Schedule != null && b.Schedule.Doctor != null
+                    ? b.Schedule.Doctor.FullName : string.Empty,
+                SpecialtyName = b.Schedule != null && b.Schedule.Doctor != null
+                    && b.Schedule.Doctor.Specialty != null
+                    ? b.Schedule.Doctor.Specialty.Name : string.Empty,
+                Date = b.Schedule != null ? b.Schedule.Date : DateTime.MinValue,
+                StartTime = b.Schedule != null ? b.Schedule.StartTime : TimeSpan.Zero,
+                EndTime = b.Schedule != null ? b.Schedule.EndTime : TimeSpan.Zero,
+                Reason = b.Reason,
+                CreatedAt = b.CreatedAt,
+                Status = b.Status
+            })
+            .ToListAsync(cancellationToken);
+
+        return (items, total);
+    }
 }

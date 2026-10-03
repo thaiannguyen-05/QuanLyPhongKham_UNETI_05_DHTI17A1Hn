@@ -4,6 +4,7 @@ using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Models;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Models.Mapping;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Services;
+using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Services.Dto;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Services;
 using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Schedule.Services.Dto;
 
@@ -94,6 +95,45 @@ public sealed class BookingController : Controller
         }
 
         return schedule.BookedCount < schedule.Capacity;
+    }
+
+    [HttpGet]
+    [RequireRole(Role.Patient)]
+    public async Task<IActionResult> My(
+        [FromQuery] BookingFilterDto filter,
+        CancellationToken cancellationToken)
+    {
+        var (items, total) = await _bookingService.GetMyAsync(GetCurrentPatientId(), filter, cancellationToken);
+
+        return View(new BookingMyViewModel
+        {
+            Bookings = items,
+            Status = filter.Status,
+            DoctorId = filter.DoctorId,
+            CurrentPage = filter.PageNumber < 1 ? 1 : filter.PageNumber,
+            PageSize = filter.PageSize < 1 ? 10 : filter.PageSize,
+            TotalItems = total,
+            DoctorList = await _scheduleService.GetDoctorDropdownAsync(cancellationToken)
+        });
+    }
+
+    [HttpGet]
+    [RequireRole(Role.Admin)]
+    public async Task<IActionResult> Index(
+        [FromQuery] BookingFilterDto filter,
+        CancellationToken cancellationToken)
+    {
+        var (items, total) = await _bookingService.GetPagedAsync(filter, cancellationToken);
+
+        return View(new BookingIndexViewModel
+        {
+            Bookings = items,
+            SearchTerm = filter.SearchTerm,
+            Status = filter.Status,
+            CurrentPage = filter.PageNumber < 1 ? 1 : filter.PageNumber,
+            PageSize = filter.PageSize < 1 ? 10 : filter.PageSize,
+            TotalItems = total
+        });
     }
 
     private int GetCurrentPatientId()

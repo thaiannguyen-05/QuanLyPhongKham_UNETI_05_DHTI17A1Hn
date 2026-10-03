@@ -1,0 +1,129 @@
+@model QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Modules.Booking.Models.BookingIndexViewModel
+@using QuanLyPhongKham_UNETI_05_DHTI17A1Hn.Enums
+@{
+    ViewData["Title"] = "Quản lý Phiếu đăng ký khám";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h3 mb-0 text-primary fw-bold">🎫 Quản lý Phiếu đăng ký khám</h1>
+        <p class="text-muted mb-0 small">Tổng cộng: <strong>@Model.TotalItems</strong> phiếu</p>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label small fw-semibold">Từ khóa (tên/SĐT bệnh nhân)</label>
+                    <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Tên, SĐT bệnh nhân..." />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Trạng thái</label>
+                    <select name="Status" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="Pending" selected="@(Model.Status == BookingStatus.Pending)">Chờ xác nhận</option>
+                        <option value="Confirmed" selected="@(Model.Status == BookingStatus.Confirmed)">Đã xác nhận</option>
+                        <option value="Completed" selected="@(Model.Status == BookingStatus.Completed)">Đã khám</option>
+                        <option value="Cancelled" selected="@(Model.Status == BookingStatus.Cancelled)">Đã hủy</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary">🔍 Lọc</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">🔄 Đặt lại</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>Bệnh nhân</th>
+                    <th>Bác sĩ</th>
+                    <th>Ngày/Giờ khám</th>
+                    <th>Ngày đăng ký</th>
+                    <th class="text-center">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Bookings.Any())
+                {
+                    foreach (var b in Model.Bookings)
+                    {
+                        <tr>
+                            <td class="text-muted fw-bold">#@b.Id</td>
+                            <td>
+                                <div class="fw-bold text-dark">@b.PatientName</div>
+                                <small class="text-muted">@(b.PatientPhone ?? "--")</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@b.DoctorName</div>
+                                <small class="text-muted">@b.SpecialtyName</small>
+                            </td>
+                            <td>
+                                <div>@b.Date.ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">@b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")</small>
+                            </td>
+                            <td><small>@b.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></td>
+                            <td class="text-center">
+                                @switch (b.Status)
+                                {
+                                    case BookingStatus.Pending:
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Chờ xác nhận</span>
+                                        break;
+                                    case BookingStatus.Confirmed:
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Đã xác nhận</span>
+                                        break;
+                                    case BookingStatus.Completed:
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Đã khám</span>
+                                        break;
+                                    case BookingStatus.Cancelled:
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Đã hủy</span>
+                                        break;
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <p class="mb-1 fs-5">📭 Không tìm thấy phiếu nào</p>
+                            <small>Hãy thử thay đổi điều kiện tìm kiếm.</small>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+            <span class="text-muted small">Trang <strong>@Model.CurrentPage</strong> / <strong>@Model.TotalPages</strong></span>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-CurrentPage="@(Model.CurrentPage - 1)" asp-route-SearchTerm="@Model.SearchTerm" asp-route-Status="@Model.Status">&laquo; Trước</a>
+                    </li>
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-CurrentPage="@p" asp-route-SearchTerm="@Model.SearchTerm" asp-route-Status="@Model.Status">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-CurrentPage="@(Model.CurrentPage + 1)" asp-route-SearchTerm="@Model.SearchTerm" asp-route-Status="@Model.Status">Sau &raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

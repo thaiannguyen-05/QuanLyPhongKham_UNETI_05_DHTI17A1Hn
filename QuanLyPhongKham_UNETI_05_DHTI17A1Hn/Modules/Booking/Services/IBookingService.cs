@@ -8,4 +8,13 @@ public interface IBookingService
         int patientId,
         BookingRegisterDto dto,
         CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<BookingDto> Items, int TotalCount)> GetMyAsync(
+        int patientId,
+        BookingFilterDto filter,
+        CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<BookingDto> Items, int TotalCount)> GetPagedAsync(
+        BookingFilterDto filter,
+        CancellationToken cancellationToken = default);
 }
